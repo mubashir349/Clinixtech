@@ -1691,109 +1691,6 @@ def download_prescription(prescription_id):
 
 # ==================== DATABASE INITIALIZATION ====================
 
-# ==================== DATABASE INITIALIZATION ====================
-
-def init_sample_data():
-    """Initialize sample data for testing — runs inside existing app context"""
-    try:
-        # Only insert if no doctors exist yet
-        if Doctor.query.count() == 0:
-            doctors_data = [
-                {
-                    'name': 'Dr. Sarah Ahmed',
-                    'age': 42,
-                    'gender': 'Female',
-                    'cnic': '42301-1234567-8',
-                    'email': 'sarah.ahmed@clinic.com',
-                    'password': 'doctor123',
-                    'contact': '0300-1234567',
-                    'specialization': 'Cardiology',
-                    'qualification': 'MBBS, FCPS (Cardiology)',
-                    'experience_years': 15,
-                    'license_number': 'PMC-12345',
-                    'current_hospital': 'City General Hospital',
-                    'availability': 'Mon-Fri: 9AM-5PM',
-                    'consultation_fee': 2500.0
-                },
-                {
-                    'name': 'Dr. Ali Hassan',
-                    'age': 38,
-                    'gender': 'Male',
-                    'cnic': '42301-7654321-9',
-                    'email': 'ali.hassan@clinic.com',
-                    'password': 'doctor123',
-                    'contact': '0300-7654321',
-                    'specialization': 'Neurology',
-                    'qualification': 'MBBS, FCPS (Neurology)',
-                    'experience_years': 12,
-                    'license_number': 'PMC-12346',
-                    'current_hospital': 'City General Hospital',
-                    'availability': 'Mon-Fri: 10AM-6PM',
-                    'consultation_fee': 3000.0
-                },
-                {
-                    'name': 'Dr. Fatima Khan',
-                    'age': 35,
-                    'gender': 'Female',
-                    'cnic': '42301-1111111-1',
-                    'email': 'fatima.khan@clinic.com',
-                    'password': 'doctor123',
-                    'contact': '0300-1111111',
-                    'specialization': 'Pediatrics',
-                    'qualification': 'MBBS, DCH, FCPS (Pediatrics)',
-                    'experience_years': 10,
-                    'license_number': 'PMC-12347',
-                    'current_hospital': 'Children Hospital',
-                    'availability': 'Mon-Sat: 8AM-4PM',
-                    'consultation_fee': 2000.0
-                },
-                {
-                    'name': 'Dr. Ahmed Raza',
-                    'age': 45,
-                    'gender': 'Male',
-                    'cnic': '42301-2222222-2',
-                    'email': 'ahmed.raza@clinic.com',
-                    'password': 'doctor123',
-                    'contact': '0300-2222222',
-                    'specialization': 'Orthopedics',
-                    'qualification': 'MBBS, MS (Orthopedics)',
-                    'experience_years': 18,
-                    'license_number': 'PMC-12348',
-                    'current_hospital': 'Orthopedic Center',
-                    'availability': 'Mon-Fri: 2PM-8PM',
-                    'consultation_fee': 2800.0
-                },
-                {
-                    'name': 'Dr. Ayesha Malik',
-                    'age': 33,
-                    'gender': 'Female',
-                    'cnic': '42301-3333333-3',
-                    'email': 'ayesha.malik@clinic.com',
-                    'password': 'doctor123',
-                    'contact': '0300-3333333',
-                    'specialization': 'Dermatology',
-                    'qualification': 'MBBS, FCPS (Dermatology)',
-                    'experience_years': 8,
-                    'license_number': 'PMC-12349',
-                    'current_hospital': 'Skin Care Clinic',
-                    'availability': 'Tue-Sat: 11AM-7PM',
-                    'consultation_fee': 2200.0
-                }
-            ]
-
-            for doc_data in doctors_data:
-                doctor = Doctor(**doc_data)
-                db.session.add(doctor)
-
-            db.session.commit()
-            print("✅ Sample doctors created")
-        else:
-            print("ℹ️  Doctors already exist — skipping sample data")
-
-    except Exception as e:
-        db.session.rollback()
-        print(f"⚠️  Could not insert sample data: {e}")
-
 
 # 1. Patient Appointments
 # # ============================================
@@ -2554,8 +2451,8 @@ if __name__ == '__main__':
             db.create_all()
             print("✅ Tables created in Oracle under clinic_user schema")
 
-            # Step 3: Insert sample data
-            init_sample_data()
+            #No need of sample data Step 3: Insert sample data
+            # init_sample_data()
 
             # Step 4: Sanity check
             check_appointment_fields()
