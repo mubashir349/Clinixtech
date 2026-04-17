@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patient Dashboard - Clinic Management System</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/patient-portal.css') }}"
+    />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('patient_dashboard') }}">
+          <i class="fas fa-hospital-user"></i> Clinixtech Patient Portal
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                href="{{ url_for('patient_dashboard') }}"
+              >
+                <i class="fas fa-home"></i> Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('book_appointment') }}">
+                <i class="fas fa-calendar-plus"></i> Book Appointment
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('view_appointments') }}">
+                <i class="fas fa-calendar-check"></i> My Appointments
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('medical_records') }}">
+                <i class="fas fa-file-medical"></i> Medical Records
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('patient_vitals') }}">
+                <i class="fas fa-heartbeat"></i> Vitals
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('prescriptions') }}">
+                <i class="fas fa-pills"></i> Prescriptions
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                <i class="fas fa-user-circle"></i> {{ session.patient }}
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('patient_profile') }}"
+                  >
+                    <i class="fas fa-user-edit"></i> Edit Profile
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid py-4">
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div
+        class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
+        role="alert"
+      >
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <!-- Welcome Section -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card gradient-card">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <h2>Welcome back, {{ patient.name }}! 👋</h2>
+                  <p class="mb-0">Here's your health overview for today</p>
+                </div>
+                <!-- Updated Code (Use This) -->
+<div class="col-md-4 text-md-end">
+  <p class="mb-1">
+    <i class="fas fa-calendar"></i> <span id="current-date">Loading...</span>
+  </p>
+  <p class="mb-0">
+    <i class="fas fa-clock"></i> <span id="current-time">Loading...</span>
+  </p>
+</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+          <div class="card stat-card stat-card-appointments">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6>Upcoming Appointments</h6>
+                  <h2>{{ upcoming_appointments|length }}</h2>
+                </div>
+                <div class="stat-icon">
+                  <i class="fas fa-calendar-check"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card stat-card stat-card-records">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6>Medical Records</h6>
+                  <h2>{{ recent_records|length }}</h2>
+                </div>
+                <div class="stat-icon">
+                  <i class="fas fa-file-medical"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card stat-card stat-card-prescriptions">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6>Active Prescriptions</h6>
+                  <h2>{{ active_prescriptions|length }}</h2>
+                </div>
+                <div class="stat-icon">
+                  <i class="fas fa-pills"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card stat-card stat-card-vitals">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6>Vital Alerts</h6>
+                  <h2>{{ vital_alerts|length }}</h2>
+                </div>
+                <div class="stat-icon">
+                  <i class="fas fa-heartbeat"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vital Alerts -->
+      {% if vital_alerts %}
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card border-warning">
+            <div class="card-header bg-warning text-white">
+              <h5 class="mb-0">
+                <i class="fas fa-exclamation-triangle"></i> Health Alerts
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                {% for alert in vital_alerts %}
+                <div class="col-md-4 mb-2">
+                  <div class="alert alert-warning mb-0">
+                    <strong>{{ alert[0] }}:</strong> {{ alert[1] }} ({{ alert[2]
+                    }})
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Main Content Row -->
+      <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+          <!-- Upcoming Appointments -->
+          <div class="card mb-4">
+            <div
+              class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+            >
+              <h5 class="mb-0">
+                <i class="fas fa-calendar-alt"></i> Upcoming Appointments
+              </h5>
+              <a
+                href="{{ url_for('book_appointment') }}"
+                class="btn btn-light btn-sm"
+              >
+                <i class="fas fa-plus"></i> Book New
+              </a>
+            </div>
+            <div class="card-body">
+              {% if upcoming_appointments %}
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Date & Time</th>
+                      <th>Doctor</th>
+                      <th>Specialization</th>
+                      <th>Priority</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for appt in upcoming_appointments %}
+                    <tr>
+                      <td>
+                        <strong
+                          >{{ appt.appointment_date.strftime('%b %d, %Y')
+                          }}</strong
+                        ><br />
+                        <small class="text-muted">{{ appt.time_slot }}</small>
+                      </td>
+                      <td>{{ appt.doctor.name }}</td>
+                      <td>{{ appt.doctor.specialization }}</td>
+                      <td>
+                        <span
+                          class="badge bg-{{ 'danger' if appt.priority == 'emergency' else 'warning' if appt.priority == 'urgent' else 'success' }}"
+                        >
+                          {{ appt.priority.upper() }}
+                        </span>
+                      </td>
+                      <td>
+                        <a
+                          href="{{ url_for('view_appointments') }}"
+                          class="btn btn-sm btn-outline-primary"
+                        >
+                          <i class="fas fa-eye"></i>
+                        </a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% else %}
+              <div class="empty-state">
+                <i class="fas fa-calendar-times"></i>
+                <p>No upcoming appointments</p>
+                <a
+                  href="{{ url_for('book_appointment') }}"
+                  class="btn btn-primary"
+                >
+                  <i class="fas fa-calendar-plus"></i> Book Your First
+                  Appointment
+                </a>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Recent Medical Records -->
+          <div class="card mb-4">
+            <div
+              class="card-header bg-success text-white d-flex justify-content-between align-items-center"
+            >
+              <h5 class="mb-0">
+                <i class="fas fa-notes-medical"></i> Recent Medical Records
+              </h5>
+              <a
+                href="{{ url_for('medical_records') }}"
+                class="btn btn-light btn-sm"
+                >View All</a
+              >
+            </div>
+            <div class="card-body">
+              {% if recent_records %}
+              <div class="timeline">
+                {% for record in recent_records %}
+                <div class="timeline-item">
+                  <div class="timeline-marker"></div>
+                  <div class="timeline-content">
+                    <h6>{{ record.visit_date.strftime('%B %d, %Y') }}</h6>
+                    <p class="mb-1">
+                      <strong>Diagnosis:</strong> {{ record.diagnosis }}
+                    </p>
+                    <p class="mb-1 text-muted">
+                      <i class="fas fa-user-md"></i> Dr. {{ record.doctor.name
+                      }}
+                    </p>
+                    {% if record.treatment %}
+                    <small class="text-muted"
+                      >Treatment: {{ record.treatment[:100] }}...</small
+                    >
+                    {% endif %}
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+              {% else %}
+              <div class="empty-state">
+                <i class="fas fa-file-medical"></i>
+                <p>No medical records yet</p>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+          <!-- Latest Vitals -->
+          <div class="card mb-4">
+            <div
+              class="card-header bg-info text-white d-flex justify-content-between align-items-center"
+            >
+              <h5 class="mb-0">
+                <i class="fas fa-heartbeat"></i> Latest Vitals
+              </h5>
+              <a
+                href="{{ url_for('patient_vitals') }}"
+                class="btn btn-light btn-sm"
+                >Add New</a
+              >
+            </div>
+            <div class="card-body">
+              {% if latest_vitals %}
+              <p class="text-muted mb-3">
+                <i class="fas fa-clock"></i> {{ latest_vitals.date.strftime('%b
+                %d, %Y at %I:%M %p') }}
+              </p>
+              <div class="vitals-grid">
+                {% if latest_vitals.heart_rate %}
+                <div class="vital-item">
+                  <i class="fas fa-heartbeat text-danger"></i>
+                  <div>
+                    <small>Heart Rate</small>
+                    <p><strong>{{ latest_vitals.heart_rate }}</strong> bpm</p>
+                  </div>
+                </div>
+                {% endif %} {% if latest_vitals.blood_pressure_systolic %}
+                <div class="vital-item">
+                  <i class="fas fa-tint text-primary"></i>
+                  <div>
+                    <small>Blood Pressure</small>
+                    <p>
+                      <strong
+                        >{{ latest_vitals.blood_pressure_systolic }}/{{
+                        latest_vitals.blood_pressure_diastolic }}</strong
+                      >
+                      mmHg
+                    </p>
+                  </div>
+                </div>
+                {% endif %} {% if latest_vitals.temperature %}
+                <div class="vital-item">
+                  <i class="fas fa-thermometer-half text-warning"></i>
+                  <div>
+                    <small>Temperature</small>
+                    <p><strong>{{ latest_vitals.temperature }}</strong> °F</p>
+                  </div>
+                </div>
+                {% endif %} {% if latest_vitals.oxygen_saturation %}
+                <div class="vital-item">
+                  <i class="fas fa-lungs text-info"></i>
+                  <div>
+                    <small>SpO2</small>
+                    <p>
+                      <strong>{{ latest_vitals.oxygen_saturation }}</strong> %
+                    </p>
+                  </div>
+                </div>
+                {% endif %} {% if latest_vitals.weight %}
+                <div class="vital-item">
+                  <i class="fas fa-weight text-success"></i>
+                  <div>
+                    <small>Weight</small>
+                    <p><strong>{{ latest_vitals.weight }}</strong> kg</p>
+                  </div>
+                </div>
+                {% endif %} {% if latest_vitals.bmi %}
+                <div class="vital-item">
+                  <i class="fas fa-chart-line text-secondary"></i>
+                  <div>
+                    <small>BMI</small>
+                    <p><strong>{{ latest_vitals.bmi }}</strong></p>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+              {% else %}
+              <div class="empty-state">
+                <i class="fas fa-heartbeat"></i>
+                <p>No vitals recorded</p>
+                <a
+                  href="{{ url_for('patient_vitals') }}"
+                  class="btn btn-info btn-sm"
+                >
+                  <i class="fas fa-plus"></i> Record Vitals
+                </a>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Active Prescriptions -->
+          <div class="card mb-4">
+            <div
+              class="card-header bg-warning text-white d-flex justify-content-between align-items-center"
+            >
+              <h5 class="mb-0">
+                <i class="fas fa-pills"></i> Active Prescriptions
+              </h5>
+              <a
+                href="{{ url_for('prescriptions') }}"
+                class="btn btn-light btn-sm"
+                >View All</a
+              >
+            </div>
+            <div class="card-body">
+              {% if active_prescriptions %}
+              <div class="list-group list-group-flush">
+                {% for rx in active_prescriptions %}
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6 class="mb-1">{{ rx.medication }}</h6>
+                      <p class="mb-1 text-muted small">
+                        {{ rx.dosage }} - {{ rx.frequency }}
+                      </p>
+                      <small class="text-muted">
+                        <i class="fas fa-user-md"></i> Dr. {{ rx.doctor.name }}
+                      </small>
+                    </div>
+                    <span class="badge bg-success">Active</span>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+              {% else %}
+              <div class="empty-state">
+                <i class="fas fa-pills"></i>
+                <p>No active prescriptions</p>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card">
+            <div class="card-header bg-secondary text-white">
+              <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+              <div class="d-grid gap-2">
+                <a
+                  href="{{ url_for('download_medical_summary') }}"
+                  class="btn btn-outline-primary"
+                >
+                  <i class="fas fa-download"></i> Download Medical Summary
+                </a>
+                <a
+                  href="{{ url_for('patient_profile') }}"
+                  class="btn btn-outline-secondary"
+                >
+                  <i class="fas fa-user-edit"></i> Edit Profile
+                </a>
+                <a
+                  href="{{ url_for('patient_vitals') }}"
+                  class="btn btn-outline-info"
+                >
+                  <i class="fas fa-chart-bar"></i> Vital Analytics
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <p class="mb-0">&copy; 2025 Clinixtech | All Rights Reserved</p>
+      </div>
+    </footer>
+
+    
+    <!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- DSA Implementations -->
+<script src="{{ url_for('static', filename='js/dsa-implementations.js') }}"></script>
+
+<!-- Client-Side Date & Time Display -->
+<script>
+// Update date and time in real-time using client's local time
+function updateDateTime() {
+    const now = new Date();
+    
+    // Format date: "Month Day, Year" (e.g., "December 25, 2024")
+    const dateOptions = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    };
+    const dateString = now.toLocaleDateString(undefined, dateOptions);
+    
+    // Format time: "HH:MM AM/PM" (e.g., "02:14 PM")
+    const timeString = now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: true 
+    });
+    
+    // Update the HTML elements
+    document.getElementById('current-date').textContent = dateString;
+    document.getElementById('current-time').textContent = timeString;
+}
+
+// Update immediately when page loads
+updateDateTime();
+
+// Update every second to show real-time clock
+setInterval(updateDateTime, 1000);
+</script>
+</body>
+  </body>
+</html>

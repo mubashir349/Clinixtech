@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Records - Clinixtech</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/patient-portal.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('patient_dashboard') }}">
+                <i class="fas fa-hospital-user"></i> Clinixtech Patient Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('patient_dashboard') }}">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('book_appointment') }}">
+                            <i class="fas fa-calendar-plus"></i> Book Appointment
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('view_appointments') }}">
+                            <i class="fas fa-calendar-check"></i> My Appointments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('medical_records') }}">
+                            <i class="fas fa-file-medical"></i> Medical Records
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('patient_vitals') }}">
+                            <i class="fas fa-heartbeat"></i> Vitals
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('prescriptions') }}">
+                            <i class="fas fa-pills"></i> Prescriptions
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> {{ session.patient }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('patient_profile') }}">
+                                <i class="fas fa-user-edit"></i> Edit Profile
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-file-medical"></i> Medical Records</h4>
+                        <a href="{{ url_for('download_medical_summary') }}" class="btn btn-light">
+                            <i class="fas fa-download"></i> Download Summary
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if records %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="timeline">
+                            {% for record in records %}
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="text-primary mb-0">{{ record.visit_date.strftime('%B %d, %Y') }}</h6>
+                                        <span class="badge bg-info">Dr. {{ record.doctor.name }}</span>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6>Diagnosis</h6>
+                                            <div class="alert alert-light">
+                                                {{ record.diagnosis }}
+                                            </div>
+                                        </div>
+                                        {% if record.treatment %}
+                                        <div class="col-md-6">
+                                            <h6>Treatment</h6>
+                                            <div class="alert alert-light">
+                                                {{ record.treatment }}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                    {% if record.prescription %}
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <h6>Prescription</h6>
+                                            <div class="alert alert-info">
+                                                {{ record.prescription }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if record.vitals %}
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <h6>Vitals Recorded</h6>
+                                            <div class="alert alert-warning">
+                                                {{ record.vitals }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if record.notes %}
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <h6>Additional Notes</h6>
+                                            <div class="alert alert-secondary">
+                                                {{ record.notes }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if record.follow_up_date %}
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <div class="alert alert-success">
+                                                <strong>Follow-up Date:</strong> {{ record.follow_up_date.strftime('%B %d, %Y') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="empty-state">
+                            <i class="fas fa-file-medical fa-4x text-muted mb-3"></i>
+                            <h4>No Medical Records Found</h4>
+                            <p class="text-muted mb-4">You don't have any medical records yet. Your medical records will appear here after your appointments.</p>
+                            <a href="{{ url_for('book_appointment') }}" class="btn btn-primary">
+                                <i class="fas fa-calendar-plus"></i> Book Your First Appointment
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

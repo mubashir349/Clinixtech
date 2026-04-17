@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doctor Login | Clinic Management System</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="login-body">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg sticky-top py-3">
+    <div class="container">
+      <a class="navbar-brand" href="{{ url_for('home') }}">Clinixtech</a>
+    </div>
+  </nav>
+
+  <!-- Login Section -->
+  <section class="login-section d-flex align-items-center justify-content-center">
+    <div class="login-wrapper text-center">
+      <div class="login-header">
+        <h1>Welcome Back</h1>
+        <p>Login to your doctor account</p>
+      </div>
+
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      {% if category == 'doctor' %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+
+      <!-- Fixed form -->
+      <form action="{{ url_for('login_doctor') }}" method="POST" class="login-form text-start">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email address</label>
+          <input type="email" name="email" class="form-control form-control-lg" id="email" placeholder="Enter your email" required />
+        </div>
+        <div class="mb-4">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" name="password" class="form-control form-control-lg" id="password" placeholder="Enter your password" required />
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <input type="checkbox" id="remember" />
+            <label for="remember" class="ms-1 small">Remember me</label>
+          </div>
+          <!-- <a href="#" class="forgot-link small">Forgot password?</a> -->
+        </div>
+
+        <button type="submit" class="btn-login w-100 py-3">Login</button>
+      </form>
+
+      <p class="mt-4 mb-0 small">
+        Don’t have an account?
+        <a href="{{ url_for('signup_doctor') }}" class="signup-link">Sign up</a>
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 Clinixtech | All Rights Reserved
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

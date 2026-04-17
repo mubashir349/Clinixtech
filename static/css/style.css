@@ -1,0 +1,252 @@
+/* ===================== VARIABLES ===================== */
+:root {
+  --blue-light: #93c5fd;
+  --blue-main: #2563eb;
+  --blue-dark: #1e3a8a;
+  --accent-cyan: #06b6d4;
+  --white: #ffffff;
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+}
+
+/* ===================== GLOBAL ===================== */
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background: linear-gradient(135deg, #e0f2fe, #f8fafc);
+  color: var(--text-dark);
+  overflow-x: hidden;
+}
+
+/* ===================== NAVBAR ===================== */
+.navbar {
+  background: linear-gradient(90deg, #1e3a8a, #2563eb, #60a5fa);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.5px;
+}
+
+.nav-link {
+  color: var(--white);
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #e0f2fe;
+  transform: translateY(-2px);
+}
+
+/* ===================== HERO / INDEX PAGE ===================== */
+.hero-section {
+  min-height: calc(100vh - 140px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.hero-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border-radius: 25px;
+  padding: 70px 60px;
+  box-shadow: 0 10px 40px rgba(37, 99, 235, 0.15);
+  overflow: hidden;
+  z-index: 2;
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.5);
+  transition: all 0.3s ease;
+}
+
+.hero-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 60px rgba(37, 99, 235, 0.2);
+}
+
+.hero-card h1 {
+  font-weight: 700;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  color: var(--blue-dark);
+  margin-bottom: 15px;
+}
+
+.hero-card p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  margin-bottom: 50px;
+}
+
+/* ===================== ROLE BUTTONS ===================== */
+.role-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+}
+
+.role-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 40px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--white);
+  text-decoration: none;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.15);
+}
+
+.role-btn:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 15px 25px rgba(37, 99, 235, 0.25);
+}
+
+.btn-doctor { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+.btn-admin { background: linear-gradient(135deg, #2563eb, #1e3a8a); }
+.btn-patient { background: linear-gradient(135deg, #06b6d4, #2563eb); }
+
+/* ===================== FOOTER ===================== */
+footer {
+  text-align: center;
+  padding: 25px 0;
+  background: linear-gradient(90deg, #1e40af, #2563eb, #3b82f6);
+  color: var(--white);
+  font-size: 0.95rem;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+footer a {
+  color: #bfdbfe;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+footer a:hover { color: #ffffff; }
+
+/* ===================== RESPONSIVE (INDEX) ===================== */
+@media (max-width: 768px) {
+  .hero-card {
+    padding: 50px 30px;
+  }
+  .hero-card h1 {
+    font-size: 2rem;
+  }
+  .role-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ===================== LOGIN PAGE ===================== */
+.login-body {
+  background: linear-gradient(135deg, #e0f2fe, #f8fafc);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.login-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.login-wrapper {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  border-radius: 25px;
+  padding: 60px 50px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 10px 40px rgba(37, 99, 235, 0.15);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.login-wrapper:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(37, 99, 235, 0.2);
+}
+
+.login-header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--blue-dark);
+}
+
+.login-header p {
+  color: var(--text-muted);
+  margin-bottom: 30px;
+}
+
+/* ===================== INPUT FIELDS ===================== */
+.form-control {
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid #dbeafe;
+  box-shadow: 0 2px 5px rgba(37, 99, 235, 0.05);
+  transition: 0.3s ease;
+  font-size: 1rem;
+}
+
+.form-control:focus {
+  border-color: var(--blue-main);
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.2);
+}
+
+/* ===================== LOGIN BUTTON ===================== */
+.btn-login {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.15);
+}
+
+.btn-login:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 25px rgba(37, 99, 235, 0.25);
+}
+
+/* ===================== LINKS ===================== */
+.signup-link, .forgot-link {
+  color: var(--blue-main);
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.signup-link:hover, .forgot-link:hover {
+  color: var(--accent-cyan);
+}
+
+/* ===================== RESPONSIVE (LOGIN) ===================== */
+@media (max-width: 768px) {
+  .login-wrapper {
+    padding: 40px 30px;
+  }
+
+  .login-header h1 {
+    font-size: 1.8rem;
+  }
+}

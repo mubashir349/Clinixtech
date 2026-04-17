@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Clinixtech</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/patient-portal.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('patient_dashboard') }}">
+                <i class="fas fa-hospital-user"></i> Clinixtech Patient Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('patient_dashboard') }}">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('book_appointment') }}">
+                            <i class="fas fa-calendar-plus"></i> Book Appointment
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('view_appointments') }}">
+                            <i class="fas fa-calendar-check"></i> My Appointments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('medical_records') }}">
+                            <i class="fas fa-file-medical"></i> Medical Records
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('patient_vitals') }}">
+                            <i class="fas fa-heartbeat"></i> Vitals
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('prescriptions') }}">
+                            <i class="fas fa-pills"></i> Prescriptions
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> {{ session.patient }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('patient_profile') }}">
+                                <i class="fas fa-user-edit"></i> Edit Profile
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Profile Card -->
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        {% if patient.profile_picture %}
+                        <img src="{{ url_for('static', filename='uploads/patients/' + patient.profile_picture) }}" 
+                             class="profile-picture mb-3" alt="Profile Picture">
+                        {% else %}
+                        <div class="profile-picture mb-3 mx-auto bg-primary text-white d-flex align-items-center justify-content-center rounded-circle" style="width: 150px; height: 150px; font-size: 3rem;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        {% endif %}
+                        <h4>{{ patient.name }}</h4>
+                        <p class="text-muted">Patient</p>
+                        <div class="row text-start mt-3">
+                            <div class="col-12 mb-2">
+                                <strong><i class="fas fa-envelope text-primary"></i> Email:</strong><br>
+                                {{ patient.email }}
+                            </div>
+                            <div class="col-12 mb-2">
+                                <strong><i class="fas fa-phone text-success"></i> Contact:</strong><br>
+                                {{ patient.contact }}
+                            </div>
+                            <div class="col-12 mb-2">
+                                <strong><i class="fas fa-id-card text-warning"></i> CNIC:</strong><br>
+                                {{ patient.cnic }}
+                            </div>
+                            {% if patient.blood_group %}
+                            <div class="col-12 mb-2">
+                                <strong><i class="fas fa-tint text-danger"></i> Blood Group:</strong><br>
+                                {{ patient.blood_group }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Statistics -->
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0"><i class="fas fa-chart-bar"></i> Account Statistics</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                Member Since
+                                <span class="badge bg-primary">{{ patient.created_at.strftime('%b %Y') }}</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                Total Appointments
+                                <span class="badge bg-success">{{ patient.appointments|length }}</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                Medical Records
+                                <span class="badge bg-warning">{{ patient.medical_records|length }}</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                Prescriptions
+                                <span class="badge bg-danger">{{ patient.prescriptions|length }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <!-- Edit Profile Form -->
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="fas fa-user-edit"></i> Edit Profile</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('patient_profile') }}" enctype="multipart/form-data">
+                            <!-- Personal Information -->
+                            <h5 class="mb-3 text-primary"><i class="fas fa-user"></i> Personal Information</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Full Name</label>
+                                    <input type="text" class="form-control" name="name" value="{{ patient.name }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Age</label>
+                                    <input type="number" class="form-control" name="age" value="{{ patient.age }}" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Gender</label>
+                                    <select class="form-select" name="gender" required>
+                                        <option value="Male" {% if patient.gender == 'Male' %}selected{% endif %}>Male</option>
+                                        <option value="Female" {% if patient.gender == 'Female' %}selected{% endif %}>Female</option>
+                                        <option value="Other" {% if patient.gender == 'Other' %}selected{% endif %}>Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Blood Group</label>
+                                    <select class="form-select" name="blood_group">
+                                        <option value="">Select Blood Group</option>
+                                        <option value="A+" {% if patient.blood_group == 'A+' %}selected{% endif %}>A+</option>
+                                        <option value="A-" {% if patient.blood_group == 'A-' %}selected{% endif %}>A-</option>
+                                        <option value="B+" {% if patient.blood_group == 'B+' %}selected{% endif %}>B+</option>
+                                        <option value="B-" {% if patient.blood_group == 'B-' %}selected{% endif %}>B-</option>
+                                        <option value="AB+" {% if patient.blood_group == 'AB+' %}selected{% endif %}>AB+</option>
+                                        <option value="AB-" {% if patient.blood_group == 'AB-' %}selected{% endif %}>AB-</option>
+                                        <option value="O+" {% if patient.blood_group == 'O+' %}selected{% endif %}>O+</option>
+                                        <option value="O-" {% if patient.blood_group == 'O-' %}selected{% endif %}>O-</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Contact Information -->
+                            <h5 class="mb-3 mt-4 text-primary"><i class="fas fa-address-book"></i> Contact Information</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Contact Number</label>
+                                    <input type="text" class="form-control" name="contact" value="{{ patient.contact }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Emergency Contact</label>
+                                    <input type="text" class="form-control" name="emergency_contact" value="{{ patient.emergency_contact or '' }}" placeholder="Emergency contact number">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">Address</label>
+                                    <textarea class="form-control" name="address" rows="3" placeholder="Your complete address">{{ patient.address or '' }}</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Profile Picture -->
+                            <h5 class="mb-3 mt-4 text-primary"><i class="fas fa-camera"></i> Profile Picture</h5>
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">Upload Profile Picture</label>
+                                    <input type="file" class="form-control" name="profile_picture" accept="image/*">
+                                    <div class="form-text">Max file size: 2MB. Supported formats: JPG, PNG, GIF</div>
+                                </div>
+                            </div>
+
+                            <!-- Change Password -->
+                            <h5 class="mb-3 mt-4 text-primary"><i class="fas fa-lock"></i> Change Password</h5>
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" class="form-control" name="new_password" placeholder="Enter new password (leave blank to keep current)">
+                                    <div class="form-text">Leave blank if you don't want to change your password</div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-save"></i> Update Profile
+                                    </button>
+                                    <a href="{{ url_for('patient_dashboard') }}" class="btn btn-secondary btn-lg">
+                                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Medical Information Summary -->
+                <div class="card mt-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-info-circle"></i> Medical Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Latest Vitals</h6>
+                                {% if patient.vitals %}
+                                {% set latest_vital = patient.vitals|sort(attribute='date', reverse=true)|first %}
+                                <ul class="list-unstyled">
+                                    {% if latest_vital.heart_rate %}
+                                    <li><strong>Heart Rate:</strong> {{ latest_vital.heart_rate }} bpm</li>
+                                    {% endif %}
+                                    {% if latest_vital.blood_pressure_systolic %}
+                                    <li><strong>Blood Pressure:</strong> {{ latest_vital.blood_pressure_systolic }}/{{ latest_vital.blood_pressure_diastolic }} mmHg</li>
+                                    {% endif %}
+                                    {% if latest_vital.temperature %}
+                                    <li><strong>Temperature:</strong> {{ "%.1f"|format(latest_vital.temperature) }}°F</li>
+                                    {% endif %}
+                                    {% if latest_vital.weight %}
+                                    <li><strong>Weight:</strong> {{ "%.1f"|format(latest_vital.weight) }} kg</li>
+                                    {% endif %}
+                                </ul>
+                                {% else %}
+                                <p class="text-muted">No vitals recorded yet.</p>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Recent Conditions</h6>
+                                {% if patient.medical_records %}
+                                {% set recent_record = patient.medical_records|sort(attribute='visit_date', reverse=true)|first %}
+                                <p><strong>Latest Diagnosis:</strong> {{ recent_record.diagnosis }}</p>
+                                <p><strong>Doctor:</strong> Dr. {{ recent_record.doctor.name }}</p>
+                                <p><strong>Date:</strong> {{ recent_record.visit_date.strftime('%b %d, %Y') }}</p>
+                                {% else %}
+                                <p class="text-muted">No medical records yet.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Profile picture preview
+            const profilePictureInput = document.querySelector('input[name="profile_picture"]');
+            profilePictureInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // You could add a preview feature here if needed
+                        console.log('File selected:', file.name);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

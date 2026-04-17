@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile | MediConnect</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      background: linear-gradient(135deg, #3771a1 0%, #1f52b1 100%);
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .navbar {
+      background: rgba(37, 99, 235, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .navbar-brand {
+      color: white !important;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+    .nav-link {
+      color: rgba(255,255,255,0.9) !important;
+      font-weight: 500;
+    }
+    
+    .container-main {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    
+    .profile-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    }
+    
+    .profile-header {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+    
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: 0 5px 20px rgba(37, 99, 235, 0.3);
+    }
+    
+    .profile-avatar i {
+      font-size: 60px;
+      color: white;
+    }
+    
+    .profile-header h2 {
+      color: #1e293b;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    
+    .profile-header p {
+      color: #64748b;
+    }
+    
+    .form-section {
+      margin-bottom: 35px;
+    }
+    
+    .section-title {
+      color: #1e293b;
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .form-label {
+      color: #475569;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    
+    .form-control, .form-select {
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    
+    .input-wrapper {
+      position: relative;
+    }
+    
+    .input-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      z-index: 10;
+      pointer-events: none;
+    }
+    
+    .form-control.with-icon {
+      padding-left: 45px;
+    }
+    
+    .btn-group-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    
+    .btn-save {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 12px 40px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-save:hover {
+      background: #1e40af;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+    }
+    
+    .btn-cancel {
+      background: #e2e8f0;
+      color: #475569;
+      border: none;
+      padding: 12px 40px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .btn-cancel:hover {
+      background: #cbd5e1;
+      color: #1e293b;
+    }
+    
+    .alert {
+      border-radius: 10px;
+      border: none;
+      padding: 15px 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg sticky-top py-3">
+    <div class="container">
+      <a class="navbar-brand" href="#">Clinixtech</a>
+      <div class="collapse navbar-collapse justify-content-end">
+        <ul class="navbar-nav align-items-center">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard_doctor') }}">
+              <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-main">
+    <div class="profile-card">
+      
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <i class="fas fa-user-md"></i>
+        </div>
+        <h2>Edit Profile</h2>
+        <p>Update your personal and professional information</p>
+      </div>
+      
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      
+      <form method="POST" action="{{ url_for('doctor_editprofile') }}">
+        
+        <div class="form-section">
+          <h4 class="section-title"><i class="fas fa-user"></i> Personal Information</h4>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Name</label>
+              <div class="input-wrapper">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" name="name" class="form-control with-icon" value="{{ doctor.name }}" required>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Age</label>
+              <div class="input-wrapper">
+                <i class="fas fa-birthday-cake input-icon"></i>
+                <input type="number" name="age" class="form-control with-icon" value="{{ doctor.age }}" min="25" max="80" required>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Gender</label>
+              <select name="gender" class="form-select" required>
+                <option value="Male" {% if doctor.gender == 'Male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if doctor.gender == 'Female' %}selected{% endif %}>Female</option>
+                <option value="Other" {% if doctor.gender == 'Other' %}selected{% endif %}>Other</option>
+              </select>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label class="form-label">CNIC</label>
+              <div class="input-wrapper">
+                <i class="fas fa-id-card input-icon"></i>
+                <input type="text" name="cnic" class="form-control with-icon" value="{{ doctor.cnic }}" placeholder="xxxxx-xxxxxxx-x" required>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-section">
+          <h4 class="section-title"><i class="fas fa-phone"></i> Contact Information</h4>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Email Address</label>
+              <div class="input-wrapper">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="email" name="email" class="form-control with-icon" value="{{ doctor.email }}" required>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Contact Number</label>
+              <div class="input-wrapper">
+                <i class="fas fa-phone input-icon"></i>
+                <input type="tel" name="contact" class="form-control with-icon" value="{{ doctor.contact }}" placeholder="03xx-xxxxxxx" required>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-section">
+          <h4 class="section-title"><i class="fas fa-stethoscope"></i> Professional Information</h4>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Specialization</label>
+              <div class="input-wrapper">
+                <i class="fas fa-stethoscope input-icon"></i>
+                <input type="text" name="specialization" class="form-control with-icon" value="{{ doctor.specialization }}" placeholder="e.g., Cardiology" required>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Qualification</label>
+              <div class="input-wrapper">
+                <i class="fas fa-graduation-cap input-icon"></i>
+                <input type="text" name="qualification" class="form-control with-icon" value="{{ doctor.qualification }}" placeholder="e.g., MBBS, MD" required>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Years of Experience</label>
+              <div class="input-wrapper">
+                <i class="fas fa-briefcase input-icon"></i>
+                <input type="number" name="experience_years" class="form-control with-icon" value="{{ doctor.experience_years }}" min="0" max="50" required>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label class="form-label">License Number</label>
+              <div class="input-wrapper">
+                <i class="fas fa-certificate input-icon"></i>
+                <input type="text" name="license_number" class="form-control with-icon" value="{{ doctor.license_number }}" required>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Current Hospital</label>
+              <div class="input-wrapper">
+                <i class="fas fa-hospital input-icon"></i>
+                <input type="text" name="current_hospital" class="form-control with-icon" value="{{ doctor.current_hospital }}" placeholder="Hospital Name" required>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Availability</label>
+              <select name="availability" class="form-select" required>
+                <option value="Full-time" {% if doctor.availability == 'Full-time' %}selected{% endif %}>Full-time</option>
+                <option value="Part-time" {% if doctor.availability == 'Part-time' %}selected{% endif %}>Part-time</option>
+                <option value="On-call" {% if doctor.availability == 'On-call' %}selected{% endif %}>On-call</option>
+                <option value="Emergency" {% if doctor.availability == 'Emergency' %}selected{% endif %}>Emergency Only</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="btn-group-actions">
+          <button type="submit" class="btn-save">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+          <a href="{{ url_for('dashboard_doctor') }}" class="btn-cancel">
+            <i class="fas fa-times"></i> Cancel
+          </a>
+        </div>
+        
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+      <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            console.log('FORM IS SUBMITTING!');
+            alert('Form is submitting!');
+        });
+    </script>
+</body>
+</html>

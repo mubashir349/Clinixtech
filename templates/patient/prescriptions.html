@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescriptions - Clinixtech</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/patient-portal.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('patient_dashboard') }}">
+                <i class="fas fa-hospital-user"></i> Clinixtech Patient Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('patient_dashboard') }}">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('book_appointment') }}">
+                            <i class="fas fa-calendar-plus"></i> Book Appointment
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('view_appointments') }}">
+                            <i class="fas fa-calendar-check"></i> My Appointments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('medical_records') }}">
+                            <i class="fas fa-file-medical"></i> Medical Records
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('patient_vitals') }}">
+                            <i class="fas fa-heartbeat"></i> Vitals
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('prescriptions') }}">
+                            <i class="fas fa-pills"></i> Prescriptions
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> {{ session.patient }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('patient_profile') }}">
+                                <i class="fas fa-user-edit"></i> Edit Profile
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="fas fa-pills"></i> My Prescriptions</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Prescriptions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-check-circle"></i> Active Prescriptions</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if active_prescriptions %}
+                        <div class="row">
+                            {% for rx in active_prescriptions %}
+                            <div class="col-md-6 mb-4">
+                                <div class="card prescription-card h-100">
+                                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0 text-success">{{ rx.medication }}</h6>
+                                        <span class="badge bg-success">Active</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-12 mb-2">
+                                                <strong>Dosage:</strong> {{ rx.dosage }}
+                                            </div>
+                                            <div class="col-12 mb-2">
+                                                <strong>Frequency:</strong> {{ rx.frequency }}
+                                            </div>
+                                            <div class="col-12 mb-2">
+                                                <strong>Duration:</strong> {{ rx.duration }}
+                                            </div>
+                                            {% if rx.instructions %}
+                                            <div class="col-12 mb-2">
+                                                <strong>Instructions:</strong> {{ rx.instructions }}
+                                            </div>
+                                            {% endif %}
+                                            {% if rx.refills > 0 %}
+                                            <div class="col-12 mb-2">
+                                                <strong>Refills Remaining:</strong> 
+                                                <span class="badge bg-info">{{ rx.refills }}</span>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-light">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-user-md"></i> Dr. {{ rx.doctor.name }}
+                                                </small>
+                                            </div>
+                                            <div class="col-6 text-end">
+                                                <small class="text-muted">
+                                                    {{ rx.date.strftime('%b %d, %Y') }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <a href="{{ url_for('download_prescription', prescription_id=rx.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-download"></i> Download PDF
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-pills fa-3x text-muted mb-3"></i>
+                            <h5>No Active Prescriptions</h5>
+                            <p class="text-muted">You don't have any active prescriptions at the moment.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Past Prescriptions -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="fas fa-history"></i> Past Prescriptions</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if past_prescriptions %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Medication</th>
+                                        <th>Dosage</th>
+                                        <th>Frequency</th>
+                                        <th>Duration</th>
+                                        <th>Doctor</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for rx in past_prescriptions %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ rx.medication }}</strong>
+                                            {% if rx.instructions %}
+                                            <br><small class="text-muted">{{ rx.instructions[:50] }}{% if rx.instructions|length > 50 %}...{% endif %}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ rx.dosage }}</td>
+                                        <td>{{ rx.frequency }}</td>
+                                        <td>{{ rx.duration }}</td>
+                                        <td>Dr. {{ rx.doctor.name }}</td>
+                                        <td>{{ rx.date.strftime('%b %d, %Y') }}</td>
+                                        <td>
+                                            <span class="badge bg-secondary">Completed</span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('download_prescription', prescription_id=rx.id) }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-download"></i> PDF
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                            <h5>No Past Prescriptions</h5>
+                            <p class="text-muted">You don't have any past prescriptions.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

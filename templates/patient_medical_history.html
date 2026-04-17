@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Records | Clinixtech</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      background: linear-gradient(135deg, #3771a1 0%, #1f52b1 100%);
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .navbar {
+      background: rgba(37, 99, 235, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .navbar-brand, .nav-link {
+      color: white !important;
+      font-weight: 600;
+    }
+    
+    .container-main {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    
+    .header-card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    
+    .header-card h2 {
+      color: #1e293b;
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    .search-box {
+      position: relative;
+      margin-top: 20px;
+    }
+    
+    .search-box input {
+      width: 100%;
+      padding: 12px 45px 12px 20px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+    
+    .search-box input:focus {
+      outline: none;
+      border-color: #1e40af;
+    }
+    
+    .search-box i {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+    }
+    
+    .patient-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    
+    .patient-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    }
+    
+    .patient-avatar {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      margin-right: 20px;
+    }
+    
+    .patient-info h5 {
+      color: #1e293b;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    
+    .patient-info p {
+      color: #64748b;
+      margin: 3px 0;
+      font-size: 0.9rem;
+    }
+    
+    .patient-stats {
+      display: flex;
+      gap: 20px;
+      margin-left: auto;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-item .number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2563eb;
+    }
+    
+    .stat-item .label {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+    }
+    
+    .btn-view {
+      background: #2563eb;
+      color: white;
+      padding: 8px 20px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s;
+    }
+    
+    .btn-view:hover {
+      background: #2563eb;
+      color: white;
+    }
+    
+    .empty-state {
+      background: white;
+      border-radius: 15px;
+      padding: 80px 40px;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    
+    .empty-state i {
+      font-size: 80px;
+      color: #e2e8f0;
+      margin-bottom: 20px;
+    }
+    
+    .empty-state h4 {
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg py-3">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-clinic-medical"></i> Clinixtech
+      </a>
+      <div class="ms-auto">
+        <a class="nav-link" href="{{ url_for('dashboard_doctor') }}">
+          <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-main">
+    
+    <div class="header-card">
+      <h2><i class="fas fa-users"></i> Patient Records</h2>
+      <p class="text-muted mb-0">View and manage patient medical histories</p>
+      
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search patients by name, CNIC, or contact..." onkeyup="searchPatients()">
+        <i class="fas fa-search"></i>
+      </div>
+    </div>
+
+    <div id="patientList">
+      {% if patients %}
+        {% for patient in patients %}
+          <a href="{{ url_for('patient_medical_history', patient_id=patient.id) }}" class="patient-card">
+            <div class="d-flex align-items-center">
+              <div class="patient-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="patient-info flex-grow-1">
+                <h5>{{ patient.name }}</h5>
+                <p><i class="fas fa-id-card"></i> {{ patient.cnic }}</p>
+                <p><i class="fas fa-phone"></i> {{ patient.contact }}</p>
+                <p><i class="fas fa-envelope"></i> {{ patient.email }}</p>
+              </div>
+              <div class="patient-stats d-none d-md-flex">
+                <div class="stat-item">
+                  <div class="number">{{ patient.age }}</div>
+                  <div class="label">Age</div>
+                </div>
+                <div class="stat-item">
+                  <div class="number">
+                    <i class="fas fa-{{ 'male' if patient.gender == 'Male' else 'female' if patient.gender == 'Female' else 'genderless' }}"></i>
+                  </div>
+                  <div class="label">{{ patient.gender }}</div>
+                </div>
+              </div>
+              <div class="ms-3">
+                <span class="btn-view">
+                  <i class="fas fa-eye"></i> View History
+                </span>
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <i class="fas fa-user-slash"></i>
+          <h4>No patients found</h4>
+          <p class="text-muted">Patient records will appear here once they register</p>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    function searchPatients() {
+      const input = document.getElementById('searchInput');
+      const filter = input.value.toLowerCase();
+      const patientCards = document.querySelectorAll('.patient-card');
+      
+      patientCards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(filter)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

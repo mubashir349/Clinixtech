@@ -1,0 +1,32 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Local database (don't push your SQLite file)
+*.db
+*.sqlite3
+instance/
+
+# Uploads (user profile pictures - too large for GitHub)
+static/uploads/
+
+# Environment variables / secrets
+.env
+.env.local
+
+# VS Code settings
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

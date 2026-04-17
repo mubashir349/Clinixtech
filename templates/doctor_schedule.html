@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Availability | MediConnect</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      background: linear-gradient(135deg, #3771a1 0%, #1f52b1 100%);
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .navbar {
+      background: rgba(37, 99, 235, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .navbar-brand {
+      color: white !important;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+    .nav-link {
+      color: rgba(255,255,255,0.9) !important;
+      font-weight: 500;
+    }
+    
+    .container-main {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    
+    .header-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .header-card h2 {
+      color: #1e293b;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    
+    .availability-card {
+      background: white;
+      border-radius: 20px;
+      padding: 35px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      margin-bottom: 25px;
+    }
+    
+    .card-title {
+      color: #1e293b;
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid #2563eb;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .week-selector {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f1f5f9;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+    }
+    
+    .week-nav-btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .week-nav-btn:hover {
+      background: #1e40af;
+      transform: translateY(-2px);
+    }
+    
+    .current-week {
+      text-align: center;
+    }
+    
+    .current-week h4 {
+      color: #1e293b;
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    .current-week p {
+      color: #64748b;
+      margin: 5px 0 0 0;
+      font-size: 0.9rem;
+    }
+    
+    .day-schedule {
+      background: #f8fafc;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 15px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+    
+    .day-schedule:hover {
+      border-color: #2563eb;
+      box-shadow: 0 3px 10px rgba(37, 99, 235, 0.1);
+    }
+    
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .day-name {
+      color: #1e293b;
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      width: 60px;
+      height: 30px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #cbd5e1;
+      border-radius: 30px;
+      transition: 0.4s;
+    }
+    
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      border-radius: 50%;
+      transition: 0.4s;
+    }
+    
+    input:checked + .toggle-slider {
+      background-color: #16a34a;
+    }
+    
+    input:checked + .toggle-slider:before {
+      transform: translateX(30px);
+    }
+    
+    .time-slots {
+      display: none;
+      margin-top: 15px;
+    }
+    
+    .time-slots.active {
+      display: block;
+    }
+    
+    .time-slot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    
+    .time-slot {
+      position: relative;
+    }
+    
+    .time-slot input[type="checkbox"] {
+      display: none;
+    }
+    
+    .time-slot label {
+      display: block;
+      padding: 12px;
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      color: #64748b;
+    }
+    
+    .time-slot input:checked + label {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+      transform: scale(1.05);
+    }
+    
+    .time-slot label:hover {
+      border-color: #2563eb;
+    }
+    
+    .btn-save {
+      width: 100%;
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+    }
+    
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(22, 163, 74, 0.3);
+    }
+    
+    .alert {
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .info-box {
+      background: #eff6ff;
+      border-left: 4px solid #2563eb;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+    }
+    
+    .info-box p {
+      margin: 0;
+      color: #1e40af;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg sticky-top py-3">
+    <div class="container">
+      <a class="navbar-brand" href="#">Clinixtech</a>
+      <div class="collapse navbar-collapse justify-content-end">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('doctor_appointments') }}">
+              <i class="fas fa-calendar-check"></i> View Appointments
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard_doctor') }}">
+              <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-main">
+    
+    <div class="header-card">
+      <h2><i class="fas fa-calendar-alt"></i> Set Your Availability</h2>
+      <p>Configure your available time slots for the week</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="availability-card">
+      <h3 class="card-title">
+        <i class="fas fa-clock"></i> Weekly Schedule
+      </h3>
+      
+      
+      <div class="week-selector">
+        <button class="week-nav-btn" onclick="previousWeek()">
+          <i class="fas fa-chevron-left"></i> Previous
+        </button>
+        <div class="current-week">
+          <h4 id="week-display">Week of Nov 16 - Nov 22, 2025</h4>
+          <p>Current Week</p>
+        </div>
+        <button class="week-nav-btn" onclick="nextWeek()">
+          Next <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+
+      <form method="POST" action="{{ url_for('doctor_schedule') }}">
+        
+        <!-- Monday -->
+        <div class="day-schedule">
+          <div class="day-header">
+            <span class="day-name">
+              <i class="fas fa-calendar-day"></i> Monday
+            </span>
+            <label class="toggle-switch">
+              <input type="checkbox" name="monday_enabled" onchange="toggleDay('monday')">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="time-slots" id="monday-slots">
+            <div class="time-slot-grid">
+              <div class="time-slot">
+                <input type="checkbox" id="mon-9" name="monday_slots" value="09:00 AM">
+                <label for="mon-9">09:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="mon-10" name="monday_slots" value="10:00 AM">
+                <label for="mon-10">10:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="mon-11" name="monday_slots" value="11:00 AM">
+                <label for="mon-11">11:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="mon-12" name="monday_slots" value="12:00 PM">
+                <label for="mon-12">12:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="mon-2" name="monday_slots" value="02:00 PM">
+                <label for="mon-2">02:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="mon-3" name="monday_slots" value="03:00 PM">
+                <label for="mon-3">03:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="mon-4" name="monday_slots" value="04:00 PM">
+                <label for="mon-4">04:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="mon-5" name="monday_slots" value="05:00 PM">
+                <label for="mon-5">05:00 PM</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tuesday -->
+        <div class="day-schedule">
+          <div class="day-header">
+            <span class="day-name">
+              <i class="fas fa-calendar-day"></i> Tuesday
+            </span>
+            <label class="toggle-switch">
+              <input type="checkbox" name="tuesday_enabled" onchange="toggleDay('tuesday')">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="time-slots" id="tuesday-slots">
+            <div class="time-slot-grid">
+              <div class="time-slot">
+                <input type="checkbox" id="tue-9" name="tuesday_slots" value="09:00 AM">
+                <label for="tue-9">09:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="tue-10" name="tuesday_slots" value="10:00 AM">
+                <label for="tue-10">10:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="tue-11" name="tuesday_slots" value="11:00 AM">
+                <label for="tue-11">11:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="tue-12" name="tuesday_slots" value="12:00 PM">
+                <label for="tue-12">12:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="tue-2" name="tuesday_slots" value="02:00 PM">
+                <label for="tue-2">02:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="tue-3" name="tuesday_slots" value="03:00 PM">
+                <label for="tue-3">03:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="tue-4" name="tuesday_slots" value="04:00 PM">
+                <label for="tue-4">04:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="tue-5" name="tuesday_slots" value="05:00 PM">
+                <label for="tue-5">05:00 PM</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wednesday -->
+        <div class="day-schedule">
+          <div class="day-header">
+            <span class="day-name">
+              <i class="fas fa-calendar-day"></i> Wednesday
+            </span>
+            <label class="toggle-switch">
+              <input type="checkbox" name="wednesday_enabled" onchange="toggleDay('wednesday')">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="time-slots" id="wednesday-slots">
+            <div class="time-slot-grid">
+              <div class="time-slot">
+                <input type="checkbox" id="wed-9" name="wednesday_slots" value="09:00 AM">
+                <label for="wed-9">09:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="wed-10" name="wednesday_slots" value="10:00 AM">
+                <label for="wed-10">10:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="wed-11" name="wednesday_slots" value="11:00 AM">
+                <label for="wed-11">11:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="wed-12" name="wednesday_slots" value="12:00 PM">
+                <label for="wed-12">12:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="wed-2" name="wednesday_slots" value="02:00 PM">
+                <label for="wed-2">02:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="wed-3" name="wednesday_slots" value="03:00 PM">
+                <label for="wed-3">03:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="wed-4" name="wednesday_slots" value="04:00 PM">
+                <label for="wed-4">04:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="wed-5" name="wednesday_slots" value="05:00 PM">
+                <label for="wed-5">05:00 PM</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Thursday -->
+        <div class="day-schedule">
+          <div class="day-header">
+            <span class="day-name">
+              <i class="fas fa-calendar-day"></i> Thursday
+            </span>
+            <label class="toggle-switch">
+              <input type="checkbox" name="thursday_enabled" onchange="toggleDay('thursday')">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="time-slots" id="thursday-slots">
+            <div class="time-slot-grid">
+              <div class="time-slot">
+                <input type="checkbox" id="thu-9" name="thursday_slots" value="09:00 AM">
+                <label for="thu-9">09:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="thu-10" name="thursday_slots" value="10:00 AM">
+                <label for="thu-10">10:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="thu-11" name="thursday_slots" value="11:00 AM">
+                <label for="thu-11">11:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="thu-12" name="thursday_slots" value="12:00 PM">
+                <label for="thu-12">12:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="thu-2" name="thursday_slots" value="02:00 PM">
+                <label for="thu-2">02:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="thu-3" name="thursday_slots" value="03:00 PM">
+                <label for="thu-3">03:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="thu-4" name="thursday_slots" value="04:00 PM">
+                <label for="thu-4">04:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="thu-5" name="thursday_slots" value="05:00 PM">
+                <label for="thu-5">05:00 PM</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Friday -->
+        <div class="day-schedule">
+          <div class="day-header">
+            <span class="day-name">
+              <i class="fas fa-calendar-day"></i> Friday
+            </span>
+            <label class="toggle-switch">
+              <input type="checkbox" name="friday_enabled" onchange="toggleDay('friday')">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="time-slots" id="friday-slots">
+            <div class="time-slot-grid">
+              <div class="time-slot">
+                <input type="checkbox" id="fri-9" name="friday_slots" value="09:00 AM">
+                <label for="fri-9">09:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="fri-10" name="friday_slots" value="10:00 AM">
+                <label for="fri-10">10:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="fri-11" name="friday_slots" value="11:00 AM">
+                <label for="fri-11">11:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="fri-12" name="friday_slots" value="12:00 PM">
+                <label for="fri-12">12:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="fri-2" name="friday_slots" value="02:00 PM">
+                <label for="fri-2">02:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="fri-3" name="friday_slots" value="03:00 PM">
+                <label for="fri-3">03:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="fri-4" name="friday_slots" value="04:00 PM">
+                <label for="fri-4">04:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="fri-5" name="friday_slots" value="05:00 PM">
+                <label for="fri-5">05:00 PM</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Saturday -->
+        <div class="day-schedule">
+          <div class="day-header">
+            <span class="day-name">
+              <i class="fas fa-calendar-day"></i> Saturday
+            </span>
+            <label class="toggle-switch">
+              <input type="checkbox" name="saturday_enabled" onchange="toggleDay('saturday')">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="time-slots" id="saturday-slots">
+            <div class="time-slot-grid">
+              <div class="time-slot">
+                <input type="checkbox" id="sat-9" name="saturday_slots" value="09:00 AM">
+                <label for="sat-9">09:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="sat-10" name="saturday_slots" value="10:00 AM">
+                <label for="sat-10">10:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="sat-11" name="saturday_slots" value="11:00 AM">
+                <label for="sat-11">11:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="sat-12" name="saturday_slots" value="12:00 PM">
+                <label for="sat-12">12:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="sat-2" name="saturday_slots" value="02:00 PM">
+                <label for="sat-2">02:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="sat-3" name="saturday_slots" value="03:00 PM">
+                <label for="sat-3">03:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="sat-4" name="saturday_slots" value="04:00 PM">
+                <label for="sat-4">04:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="sat-5" name="saturday_slots" value="05:00 PM">
+                <label for="sat-5">05:00 PM</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sunday -->
+        <div class="day-schedule">
+          <div class="day-header">
+            <span class="day-name">
+              <i class="fas fa-calendar-day"></i> Sunday
+            </span>
+            <label class="toggle-switch">
+              <input type="checkbox" name="sunday_enabled" onchange="toggleDay('sunday')">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="time-slots" id="sunday-slots">
+            <div class="time-slot-grid">
+              <div class="time-slot">
+                <input type="checkbox" id="sun-9" name="sunday_slots" value="09:00 AM">
+                <label for="sun-9">09:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="sun-10" name="sunday_slots" value="10:00 AM">
+                <label for="sun-10">10:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="sun-11" name="sunday_slots" value="11:00 AM">
+                <label for="sun-11">11:00 AM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="sun-12" name="sunday_slots" value="12:00 PM">
+                <label for="sun-12">12:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="sun-2" name="sunday_slots" value="02:00 PM">
+                <label for="sun-2">02:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="sun-3" name="sunday_slots" value="03:00 PM">
+                <label for="sun-3">03:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="sun-4" name="sunday_slots" value="04:00 PM">
+                <label for="sun-4">04:00 PM</label>
+              </div>
+              <div class="time-slot">
+                <input type="checkbox" id="sun-5" name="sunday_slots" value="05:00 PM">
+                <label for="sun-5">05:00 PM</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-save">
+          <i class="fas fa-save"></i> Save Availability
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    function toggleDay(day) {
+      const slots = document.getElementById(day + '-slots');
+      slots.classList.toggle('active');
+    }
+
+    function previousWeek() {
+      alert('Previous week functionality to be implemented in future');
+    }
+
+    function nextWeek() {
+      alert('Next week functionality to be implemented in future');
+    }
+  </script>
+</body>
+</html>

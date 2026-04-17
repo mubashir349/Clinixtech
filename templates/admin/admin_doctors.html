@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manage Doctors | ClinicMS</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-style.css') }}">
+
+<style>
+html, body { height:100%; }
+body { display:flex; flex-direction:column; }
+main { flex:1; }
+
+.doctor-card{
+  background:#f8f9fa;
+  border-radius:8px;
+  padding:15px;
+  margin-bottom:15px;
+}
+
+.add-doctor-form{
+  display:none;
+  background:#fff;
+  padding:20px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  margin-bottom:20px;
+}
+
+.card-actions i{
+  cursor:pointer;
+  font-size:1.2rem;
+  margin-right:10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Top Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark gradient-blue py-3 shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <i class="bi bi-heart-pulse-fill me-2"></i> ClinicMS Admin
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_patients') }}"><i class="bi bi-person-hearts me-1"></i> Patients</a></li>
+        <li class="nav-item"><a class="nav-link active" href="{{ url_for('admin_doctors') }}"><i class="bi bi-person-badge me-1"></i> Doctors</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_appointments') }}"><i class="bi bi-calendar-check me-1"></i> Appointments</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_payments') }}"><i class="bi bi-cash-stack me-1"></i> Payments</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_rooms') }}"><i class="bi bi-building me-1"></i> Rooms</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle me-1"></i> {{ session['admin'] }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#">Edit Profile</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= MAIN ================= -->
+<main class="container mt-4">
+  
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {{ message }}
+    </div>
+  {% endfor %}
+{% endwith %}
+
+<div style="text-align: center;">
+  <h2>Manage Doctors</h2>
+  <p>View, filter, and manage all doctors</p>
+</div>
+<!-- ================= FILTERS ================= -->
+<form method="GET" action="{{ url_for('admin_doctors') }}" class="row g-2 mb-4">
+  <div class="col-md-3">
+    <input type="text" name="name" class="form-control" placeholder="Search by Name" value="{{ request.args.get('name','') }}">
+  </div>
+  <div class="col-md-3">
+    <input type="text" name="specialization" class="form-control" placeholder="Search by Specialization" value="{{ request.args.get('specialization','') }}">
+  </div>
+  <div class="col-md-3">
+    <select name="availability" class="form-control">
+      <option value="">All</option>
+      <option value="Available" {% if request.args.get('availability')=='Available' %}selected{% endif %}>Available</option>
+      <option value="Not Available" {% if request.args.get('availability')=='Not Available' %}selected{% endif %}>Not Available</option>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <button class="btn btn-primary w-100">Filter</button>
+  </div>
+</form>
+
+<button class="btn btn-success mb-3" id="openFormBtn">+ Add Doctor</button>
+
+
+<!-- ================= ADD / EDIT FORM ================= -->
+<div class="add-doctor-form" id="addDoctorForm">
+<h4 id="formTitle">Add Doctor</h4>
+
+<form method="POST" id="doctorForm" action="{{ url_for('add_doctor') }}">
+<input type="hidden" name="doctor_id" id="doctor_id">
+
+<input id="name" name="name" class="form-control mb-2" placeholder="Doctor Name" required>
+<input id="age" name="age" type="number" class="form-control mb-2" placeholder="Age" required>
+
+<select id="gender" name="gender" class="form-control mb-2" required>
+<option value="">Select Gender</option>
+<option value="Male">Male</option>
+<option value="Female">Female</option>
+</select>
+
+<input id="cnic" name="cnic" class="form-control mb-2" placeholder="CNIC" required>
+<input id="email" name="email" type="email" class="form-control mb-2" placeholder="Email" required>
+<input id="contact" name="contact" class="form-control mb-2" placeholder="Contact Number" required>
+
+<input id="specialization" name="specialization" class="form-control mb-2" placeholder="Specialization" required>
+<input id="qualification" name="qualification" class="form-control mb-2" placeholder="Qualification" required>
+<input id="experience_years" name="experience_years" type="number" class="form-control mb-2" placeholder="Experience Years" required>
+<input id="license_number" name="license_number" class="form-control mb-2" placeholder="License Number" required>
+<input id="current_hospital" name="current_hospital" class="form-control mb-2" placeholder="Current Hospital" required>
+
+<input id="availability" name="availability" class="form-control mb-2"
+placeholder="Availability (e.g. Mon-Fri 9AM-5PM)" required>
+
+<input id="consultation_fee" name="consultation_fee" type="number" step="0.01"
+class="form-control mb-2" placeholder="Consultation Fee" required>
+
+<button type="submit" id="submitBtn" class="btn btn-primary">Add Doctor</button>
+<button type="button" class="btn btn-secondary" id="closeFormBtn">Cancel</button>
+</form>
+</div>
+
+
+<!-- ================= DOCTOR CARDS ================= -->
+<div class="doctor-cards">
+{% for d in doctors %}
+<div class="doctor-card">
+<h5>{{ d.name }}</h5>
+<p>Specialization: {{ d.specialization }}</p>
+<p>Hospital: {{ d.current_hospital }}</p>
+<p>Experience: {{ d.experience_years }} years</p>
+
+<span class="badge {% if d.is_available_now %}bg-success{% else %}bg-danger{% endif %}">
+{% if d.is_available_now %}Available{% else %}Not Available{% endif %}
+</span>
+
+<p class="mt-2">Consultation Fee: Rs. {{ d.consultation_fee }}</p>
+
+<div class="card-actions mt-2">
+<a onclick="openEditForm('{{ d.id }}','{{ d.name }}','{{ d.age }}','{{ d.gender }}','{{ d.cnic }}','{{ d.email }}','{{ d.contact }}','{{ d.specialization }}','{{ d.qualification }}','{{ d.experience_years }}','{{ d.license_number }}','{{ d.current_hospital }}','{{ d.availability }}','{{ d.consultation_fee }}')">
+<i class="bi bi-pencil-square"></i>
+</a>
+
+<a href="{{ url_for('delete_doctor', id=d.id) }}" onclick="return confirm('Delete doctor?')">
+<i class="bi bi-trash text-danger"></i>
+</a>
+</div>
+</div>
+{% else %}
+<p class="text-muted">No doctors found.</p>
+{% endfor %}
+</div>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="mt-auto text-center py-3 bg-light">
+© 2025 ClinicMS | All Rights Reserved
+</footer>
+
+<!-- ================= JS ================= -->
+<script>
+const openBtn = document.getElementById("openFormBtn");
+const closeBtn = document.getElementById("closeFormBtn");
+const formBox = document.getElementById("addDoctorForm");
+
+openBtn.onclick = () => {
+    formBox.style.display="block";
+    openBtn.style.display="none";
+};
+
+closeBtn.onclick = () => {
+    formBox.style.display="none";
+    openBtn.style.display="inline-block";
+    resetForm();
+};
+
+function openEditForm(id,name,age,gender,cnic,email,contact,specialization,qualification,experience,license,hospital,availability,fee){
+    document.getElementById("formTitle").innerText="Edit Doctor";
+    document.getElementById("doctor_id").value=id;
+
+    document.getElementById("name").value=name;
+    document.getElementById("age").value=age;
+    document.getElementById("gender").value=gender;
+    document.getElementById("cnic").value=cnic;
+    document.getElementById("email").value=email;
+    document.getElementById("contact").value=contact;
+    document.getElementById("specialization").value=specialization;
+    document.getElementById("qualification").value=qualification;
+    document.getElementById("experience_years").value=experience;
+    document.getElementById("license_number").value=license;
+    document.getElementById("current_hospital").value=hospital;
+    document.getElementById("availability").value=availability;
+    document.getElementById("consultation_fee").value=fee;
+
+    // Make unique fields read-only on edit
+    document.getElementById("cnic").readOnly=true;
+    document.getElementById("email").readOnly=true;
+    document.getElementById("license_number").readOnly=true;
+
+    document.getElementById("doctorForm").action="/admin/doctor/edit/"+id;
+    document.getElementById("submitBtn").innerText="Update Doctor";
+
+    formBox.style.display="block";
+    openBtn.style.display="none";
+}
+
+function resetForm(){
+    document.getElementById("formTitle").innerText="Add Doctor";
+    document.getElementById("doctorForm").action="{{ url_for('add_doctor') }}";
+    document.getElementById("submitBtn").innerText="Add Doctor";
+    document.getElementById("doctorForm").reset();
+
+    document.getElementById("cnic").readOnly=false;
+    document.getElementById("email").readOnly=false;
+    document.getElementById("license_number").readOnly=false;
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

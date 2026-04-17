@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Appointment - Clinixtech</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/patient-portal.css') }}"
+    />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('patient_dashboard') }}">
+          <i class="fas fa-hospital-user"></i> Clinixtech Patient Portal
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('patient_dashboard') }}">
+                <i class="fas fa-home"></i> Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                href="{{ url_for('book_appointment') }}"
+              >
+                <i class="fas fa-calendar-plus"></i> Book Appointment
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('view_appointments') }}">
+                <i class="fas fa-calendar-check"></i> My Appointments
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('medical_records') }}">
+                <i class="fas fa-file-medical"></i> Medical Records
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('patient_vitals') }}">
+                <i class="fas fa-heartbeat"></i> Vitals
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('prescriptions') }}">
+                <i class="fas fa-pills"></i> Prescriptions
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                <i class="fas fa-user-circle"></i> {{ session.patient }}
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('patient_profile') }}"
+                  >
+                    <i class="fas fa-user-edit"></i> Edit Profile
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div
+        class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
+        role="alert"
+      >
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h4 class="mb-0">
+                <i class="fas fa-calendar-plus"></i> Book New Appointment
+              </h4>
+            </div>
+            <div class="card-body">
+              <form method="POST" action="{{ url_for('book_appointment') }}">
+                <!-- Step 1: Select Specialization -->
+                <div class="row mb-4">
+                  <div class="col-md-6">
+                    <label class="form-label required">Specialization</label>
+                    <select
+                      class="form-select"
+                      id="specialization"
+                      name="specialization"
+                      required
+                    >
+                      <option value="">Select Specialization</option>
+                      {% for spec in specializations %}
+                      <option value="{{ spec }}">{{ spec }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label required">Appointment Date</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="appointmentDate"
+                      name="date"
+                      min="{{ today }}"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <!-- Step 2: Select Doctor -->
+                <div class="row mb-4" id="doctorsSection" style="display: none">
+                  <div class="col-12">
+                    <label class="form-label required">Select Doctor</label>
+                    <div id="doctorsList" class="row"></div>
+                  </div>
+                </div>
+
+                <!-- Step 3: Select Time Slot -->
+                <div
+                  class="row mb-4"
+                  id="timeSlotsSection"
+                  style="display: none"
+                >
+                  <div class="col-12">
+                    <label class="form-label required">Select Time Slot</label>
+                    <div id="timeSlots" class="d-flex flex-wrap gap-2"></div>
+                  </div>
+                </div>
+
+                <!-- Step 4: Appointment Details -->
+                <div class="row mb-4" id="detailsSection" style="display: none">
+                  <div class="col-12">
+                    <h5>Appointment Details</h5>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label class="form-label required">Priority</label>
+                        <select class="form-select" name="priority" required>
+                          <option value="normal">Normal</option>
+                          <option value="urgent">Urgent</option>
+                          <option value="emergency">Emergency</option>
+                        </select>
+                      </div>
+                      <div class="col-md-12 mt-3">
+                        <label class="form-label required">
+                          Reason for Visit</label
+                        >
+                        <textarea
+                          class="form-control"
+                          name="reason"
+                          rows="4"
+                          placeholder="Describe your reason for appointment..."
+                          required
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-12">
+                    <button
+                      type="submit"
+                      class="btn btn-primary btn-lg"
+                      id="bookButton"
+                      disabled
+                    >
+                      <i class="fas fa-calendar-check"></i> Book Appointment
+                    </button>
+                    <a
+                      href="{{ url_for('patient_dashboard') }}"
+                      class="btn btn-secondary btn-lg"
+                    >
+                      <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Available Doctors Preview -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header bg-info text-white">
+              <h5 class="mb-0">
+                <i class="fas fa-user-md"></i> Our Specialist Doctors
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row" id="allDoctors">
+                {% for doctor in doctors %}
+                <div class="col-md-4 mb-3">
+                  <div class="card doctor-card h-100">
+                    <div class="card-body text-center">
+                      <div class="mb-3">
+                        <i class="fas fa-user-md fa-3x text-primary"></i>
+                      </div>
+                      <h5>Dr. {{ doctor.name }}</h5>
+                      <p class="text-muted">{{ doctor.specialization }}</p>
+                      <p class="small">{{ doctor.qualification }}</p>
+                      <p class="text-success">
+                        <strong
+                          >Fee: Rs. {{ "%.2f"|format(doctor.consultation_fee)
+                          }}</strong
+                        >
+                      </p>
+                      <span class="badge bg-primary"
+                        >{{ doctor.experience_years }} years experience</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const specializationSelect = document.getElementById("specialization");
+        const dateInput = document.getElementById("appointmentDate");
+        const doctorsSection = document.getElementById("doctorsSection");
+        const timeSlotsSection = document.getElementById("timeSlotsSection");
+        const detailsSection = document.getElementById("detailsSection");
+        const bookButton = document.getElementById("bookButton");
+        const allDoctorsSection = document.getElementById("allDoctors");
+
+        let selectedDoctor = null;
+        let selectedTime = null;
+
+        // Time slots available
+        const timeSlots = [
+          "09:00 AM",
+          "09:30 AM",
+          "10:00 AM",
+          "10:30 AM",
+          "11:00 AM",
+          "11:30 AM",
+          "12:00 PM",
+          "12:30 PM",
+          "02:00 PM",
+          "02:30 PM",
+          "03:00 PM",
+          "03:30 PM",
+          "04:00 PM",
+          "04:30 PM",
+          "05:00 PM",
+        ];
+
+        // Load doctors when specialization and date are selected
+        async function loadDoctors() {
+          const specialization = specializationSelect.value;
+          const date = dateInput.value;
+
+          if (!specialization || !date) {
+            doctorsSection.style.display = "none";
+            return;
+          }
+
+          try {
+            const response = await fetch(
+              `/api/doctors/available?specialization=${specialization}&date=${date}`
+            );
+            const doctors = await response.json();
+
+            displayDoctors(doctors);
+            doctorsSection.style.display = "block";
+            timeSlotsSection.style.display = "none";
+            detailsSection.style.display = "none";
+            bookButton.disabled = true;
+          } catch (error) {
+            console.error("Error loading doctors:", error);
+          }
+        }
+
+        function displayDoctors(doctors) {
+          const doctorsList = document.getElementById("doctorsList");
+          doctorsList.innerHTML = "";
+
+          if (doctors.length === 0) {
+            doctorsList.innerHTML =
+              '<div class="col-12"><div class="alert alert-warning">No doctors available for selected criteria.</div></div>';
+            return;
+          }
+
+          doctors.forEach((doctor) => {
+            const doctorCard = `
+                        <div class="col-md-6 mb-3">
+                            <input type="radio" class="btn-check" name="doctor_id" value="${
+                              doctor.id
+                            }" id="doctor${doctor.id}">
+                            <label class="btn btn-outline-primary w-100 text-start p-3" for="doctor${
+                              doctor.id
+                            }">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">Dr. ${doctor.name}</h6>
+                                        <small class="text-muted">${
+                                          doctor.specialization
+                                        }</small><br>
+                                        <small>${doctor.qualification}</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <strong>Rs. ${doctor.consultation_fee.toFixed(
+                                          2
+                                        )}</strong><br>
+                                        <small class="text-muted">${
+                                          doctor.experience_years
+                                        } yrs exp</small>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    `;
+            doctorsList.innerHTML += doctorCard;
+          });
+
+          // Add event listeners to doctor selection
+          document
+            .querySelectorAll('input[name="doctor_id"]')
+            .forEach((radio) => {
+              radio.addEventListener("change", function () {
+                selectedDoctor = this.value;
+                showTimeSlots(selectedDoctor);
+              });
+            });
+        }
+
+        // In the displayDoctors function, update the time slot handling
+        function showTimeSlots(doctorId) {
+          const date = dateInput.value;
+          if (!date) return;
+
+          // Fetch booked slots from server
+          fetch(
+            `/api/doctors/available?specialization=${specializationSelect.value}&date=${date}`
+          )
+            .then((response) => response.json())
+            .then((doctors) => {
+              const doctor = doctors.find((d) => d.id == doctorId);
+              const bookedSlots = doctor ? doctor.booked_slots : [];
+
+              const timeSlotsContainer = document.getElementById("timeSlots");
+              timeSlotsContainer.innerHTML = "";
+
+              timeSlots.forEach((slot) => {
+                const isBooked = bookedSlots.includes(slot);
+                const timeSlot = `
+                    <input type="radio" class="btn-check" name="time" value="${slot}" id="time${slot.replace(
+                  /[^a-zA-Z0-9]/g,
+                  ""
+                )}" ${isBooked ? "disabled" : ""}>
+                    <label class="btn ${
+                      isBooked ? "btn-secondary" : "btn-outline-success"
+                    } time-slot" for="time${slot.replace(/[^a-zA-Z0-9]/g, "")}">
+                        ${slot}
+                    </label>
+                `;
+                timeSlotsContainer.innerHTML += timeSlot;
+              });
+
+              timeSlotsSection.style.display = "block";
+              detailsSection.style.display = "none";
+              bookButton.disabled = true;
+
+              // Add event listeners to time slot selection
+              document
+                .querySelectorAll('input[name="time"]')
+                .forEach((radio) => {
+                  radio.addEventListener("change", function () {
+                    selectedTime = this.value;
+                    showAppointmentDetails();
+                  });
+                });
+            });
+        }
+
+        function showAppointmentDetails() {
+          detailsSection.style.display = "block";
+          bookButton.disabled = false;
+        }
+
+        // Event listeners
+        specializationSelect.addEventListener("change", loadDoctors);
+        dateInput.addEventListener("change", loadDoctors);
+
+        // Hide all doctors when filtering
+        specializationSelect.addEventListener("change", function () {
+          if (this.value) {
+            allDoctorsSection.style.display = "none";
+          } else {
+            allDoctorsSection.style.display = "flex";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

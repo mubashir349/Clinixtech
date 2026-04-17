@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard | ClinicMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-style.css') }}">
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark gradient-blue py-3 shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <i class="bi bi-heart-pulse-fill me-2"></i> ClinicMS Admin
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item"><a class="nav-link active" href="{{ url_for('admin_dashboard') }}"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_patients') }}"><i class="bi bi-person-hearts me-1"></i> Patients</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_doctors') }}"><i class="bi bi-person-badge me-1"></i> Doctors</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_appointments') }}"><i class="bi bi-calendar-check me-1"></i> Appointments</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_payments') }}"><i class="bi bi-cash-stack me-1"></i> Payments</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_rooms') }}"><i class="bi bi-building me-1"></i> Rooms</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle me-1"></i> {{ session.get('admin_name') }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#">Edit Profile</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-4">
+
+  <!-- Welcome Message -->
+  <div class="text-center mb-4">
+    <h1 class="fw-bold">Welcome Back, {{ session.get('admin_name') }}</h1>
+    <p class="text-muted">Manage your clinic efficiently from one place.</p>
+  </div>
+
+  <!-- Summary Cards Row -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-3 col-md-6 col-sm-12">
+      <div class="dash-card gradient-red text-white shadow-sm">
+        <div class="icon-box mb-3"><i class="bi bi-calendar-check"></i></div>
+        <h5 class="fw-bold">Upcoming Appointments</h5>
+        <h2 class="fw-bold">0</h2>
+        <i class="bi bi-calendar-check background-icon"></i>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12">
+      <div class="dash-card gradient-green text-white shadow-sm">
+        <div class="icon-box mb-3"><i class="bi bi-person-badge"></i></div>
+        <h5 class="fw-bold">Available Doctors</h5>
+        <h2 class="fw-bold">0</h2>
+        <i class="bi bi-person-badge background-icon"></i>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12">
+      <div class="dash-card gradient-yellow text-white shadow-sm">
+        <div class="icon-box mb-3"><i class="bi bi-people"></i></div>
+        <h5 class="fw-bold">Patients Today</h5>
+        <h2 class="fw-bold">0</h2>
+        <i class="bi bi-people background-icon"></i>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12">
+      <div class="dash-card gradient-blue text-white shadow-sm">
+        <div class="icon-box mb-3"><i class="bi bi-building"></i></div>
+        <h5 class="fw-bold">Rooms</h5>
+        <h2 class="fw-bold">0</h2>
+        <i class="bi bi-building background-icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Sections -->
+  <div class="row g-4">
+
+    <!-- Upcoming Appointments -->
+    <div class="col-lg-8 col-md-12">
+      <div class="card shadow-sm fixed-card">
+        <div class="card-header d-flex justify-content-between align-items-center bg-danger text-white">
+          <h5 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Upcoming Appointments</h5>
+          <a href="{{ url_for('admin_appointments') }}" class="btn btn-sm btn-light text-danger">Show All</a>
+        </div>
+        <div class="card-body text-center py-5">
+          <i class="bi bi-calendar-x display-1 text-muted mb-3"></i>
+          <p class="text-muted mb-3">No upcoming appointments</p>
+          <button class="btn btn-gradient-blue">Book Your First Appointment</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Available Doctors -->
+    <div class="col-lg-4 col-md-12">
+      <div class="card shadow-sm fixed-card">
+        <div class="card-header d-flex justify-content-between align-items-center bg-success text-white">
+          <h5 class="mb-0"><i class="bi bi-person-badge me-2"></i>Available Doctors</h5>
+          <a href="{{ url_for('admin_doctors') }}" class="btn btn-sm btn-light text-success">Show All</a>
+        </div>
+        <div class="card-body text-center py-5">
+          <i class="bi bi-person-dash display-1 text-muted mb-3"></i>
+          <p class="text-muted mb-3">No doctors available</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Patients & Payments -->
+    <div class="col-lg-6 col-md-12">
+      <div class="card shadow-sm fixed-card">
+        <div class="card-header d-flex justify-content-between align-items-center bg-warning text-white">
+          <h5 class="mb-0"><i class="bi bi-people me-2"></i>Patients Today</h5>
+          <div>
+            <a href="{{ url_for('admin_patients') }}" class="btn btn-sm btn-light text-warning me-2">Show All</a>
+            <a href="{{ url_for('admin_payments') }}" class="btn btn-sm btn-light text-warning">Show Payments</a>
+          </div>
+        </div>
+        <div class="card-body text-center py-5">
+          <i class="bi bi-person-x display-1 text-muted mb-3"></i>
+          <p class="text-muted mb-3">No patients today</p>
+          <button class="btn btn-gradient-blue">Add Patient</button>
+        </div>
+      </div>
+    </div>
+
+<!-- Rooms Section -->
+<div class="col-lg-6 col-md-12">
+  <div class="card shadow-sm fixed-card">
+
+    <!-- Header -->
+    <div class="card-header bg-primary text-white d-flex align-items-center justify-content-between">
+      <h5 class="mb-0"><i class="bi bi-building me-2"></i>Rooms</h5>
+      <a href="{{ url_for('admin_rooms') }}" class="btn btn-sm btn-light text-primary">Edit Availability</a>
+    </div>
+
+    <!-- Wrapper (VERY IMPORTANT → needed for CSS to work!) -->
+    <div class="rooms-container">
+
+      <!-- Radio tabs -->
+      <div class="segmented-container">
+
+        <input type="radio" name="roomtab" id="available" checked>
+        <label for="available" class="seg-btn">Available</label>
+
+        <input type="radio" name="roomtab" id="occupied">
+        <label for="occupied" class="seg-btn">Occupied</label>
+
+      </div>
+
+      <!-- Content -->
+      <div class="rooms-wrapper">
+
+        <div class="room-pane available-pane text-muted">
+          <i class="bi bi-door-open display-1 mt-4 mb-3"></i>
+          <p class="mb-0">No available rooms right now</p>
+        </div>
+
+        <div class="room-pane occupied-pane text-muted">
+          <i class="bi bi-person-fill-lock display-1 mt-4 mb-3"></i>
+          <p class="mb-0">No occupied rooms found</p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+  </div>
+</main>
+
+<footer class="text-center py-3">
+  © 2025 ClinicMS | All Rights Reserved
+</footer>
+
+<script>
+function showRooms(type) {
+  const container = document.getElementById('rooms-content');
+  if(type === 'available'){
+    container.innerHTML = '<ul class="list-group"><li class="list-group-item">Room 101</li><li class="list-group-item">Room 102</li></ul>';
+  } else {
+    container.innerHTML = '<ul class="list-group"><li class="list-group-item">Room 201</li><li class="list-group-item">Room 202</li></ul>';
+  }
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

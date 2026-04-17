@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Appointments - Clinixtech</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/patient-portal.css') }}"
+    />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('patient_dashboard') }}">
+          <i class="fas fa-hospital-user"></i> Clinixtech Patient Portal
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('patient_dashboard') }}">
+                <i class="fas fa-home"></i> Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('book_appointment') }}">
+                <i class="fas fa-calendar-plus"></i> Book Appointment
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                href="{{ url_for('view_appointments') }}"
+              >
+                <i class="fas fa-calendar-check"></i> My Appointments
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('medical_records') }}">
+                <i class="fas fa-file-medical"></i> Medical Records
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('patient_vitals') }}">
+                <i class="fas fa-heartbeat"></i> Vitals
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('prescriptions') }}">
+                <i class="fas fa-pills"></i> Prescriptions
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                <i class="fas fa-user-circle"></i> {{ session.patient }}
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('patient_profile') }}"
+                  >
+                    <i class="fas fa-user-edit"></i> Edit Profile
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div
+        class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
+        role="alert"
+      >
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div
+              class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+            >
+              <h4 class="mb-0">
+                <i class="fas fa-calendar-check"></i> My Appointments
+              </h4>
+              <a href="{{ url_for('book_appointment') }}" class="btn btn-light">
+                <i class="fas fa-plus"></i> Book New Appointment
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming Appointments -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header bg-success text-white">
+              <h5 class="mb-0">
+                <i class="fas fa-clock"></i> Upcoming Appointments
+              </h5>
+            </div>
+            <div class="card-body">
+              {% if upcoming_appointments %}
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Date & Time</th>
+                      <th>Doctor</th>
+                      <th>Specialization</th>
+                      <th>Priority</th>
+                      <th>Reason</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for appointment in upcoming_appointments %}
+                    <tr>
+                      <td>
+                        <strong
+                          >{{ appointment.appointment_date.strftime('%b %d, %Y')
+                          }}</strong
+                        ><br />
+                        <small class="text-muted"
+                          >{{ appointment.time_slot }}</small
+                        >
+                      </td>
+                      <td>
+                        <strong>Dr. {{ appointment.doctor.name }}</strong><br />
+                        <small class="text-muted"
+                          >{{ appointment.doctor.qualification }}</small
+                        >
+                      </td>
+                      <td>{{ appointment.doctor.specialization }}</td>
+                      <td>
+                        <span
+                          class="badge bg-{{ 'danger' if appointment.priority == 'emergency' else 'warning' if appointment.priority == 'urgent' else 'success' }}"
+                        >
+                          {{ appointment.priority.upper() }}
+                        </span>
+                      </td>
+                      <td>
+                        {% if appointment.reason %}
+                        <span title="{{ appointment.reason }}">
+                          {{ appointment.reason[:50] }}{% if
+                          appointment.reason|length > 50 %}...{% endif %}
+                        </span>
+                        {% else %}
+                        <span class="text-muted">No reason provided</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        <span class="badge bg-info"
+                          >{{ appointment.status.upper() }}</span
+                        >
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-outline-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#appointmentModal{{ appointment.id }}"
+                          >
+                            <i class="fas fa-eye"></i>
+                          </button>
+                          {% if appointment.status == 'scheduled' %}
+                          <form
+                            method="POST"
+                            action="{{ url_for('cancel_appointment', appointment_id=appointment.id) }}"
+                            class="d-inline"
+                          >
+                            <button
+                              type="submit"
+                              class="btn btn-sm btn-outline-danger"
+                              onclick="return confirm('Are you sure you want to cancel this appointment?')"
+                            >
+                              <i class="fas fa-times"></i>
+                            </button>
+                          </form>
+                          {% endif %}
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% else %}
+              <div class="empty-state">
+                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                <h5>No Upcoming Appointments</h5>
+                <p class="text-muted">
+                  You don't have any upcoming appointments scheduled.
+                </p>
+                <a
+                  href="{{ url_for('book_appointment') }}"
+                  class="btn btn-primary"
+                >
+                  <i class="fas fa-calendar-plus"></i> Book New Appointment
+                </a>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Past Appointments -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header bg-secondary text-white">
+              <h5 class="mb-0">
+                <i class="fas fa-history"></i> Past Appointments
+              </h5>
+            </div>
+            <div class="card-body">
+              {% if past_appointments %}
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Date & Time</th>
+                      <th>Doctor</th>
+                      <th>Specialization</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for appointment in past_appointments %}
+                    <tr>
+                      <td>
+                        <strong
+                          >{{ appointment.appointment_date.strftime('%b %d, %Y')
+                          }}</strong
+                        ><br />
+                        <small class="text-muted"
+                          >{{ appointment.time_slot }}</small
+                        >
+                      </td>
+                      <td>Dr. {{ appointment.doctor.name }}</td>
+                      <td>{{ appointment.doctor.specialization }}</td>
+                      <td>
+                        <span
+                          class="badge bg-{{ 'success' if appointment.status == 'completed' else 'danger' }}"
+                        >
+                          {{ appointment.status.upper() }}
+                        </span>
+                      </td>
+                      <td>
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-primary"
+                          data-bs-toggle="modal"
+                          data-bs-target="#pastAppointmentModal{{ appointment.id }}"
+                        >
+                          <i class="fas fa-eye"></i> View
+                        </button>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% else %}
+              <div class="empty-state">
+                <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                <h5>No Past Appointments</h5>
+                <p class="text-muted">
+                  You don't have any past appointments yet.
+                </p>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming Appointment Modals -->
+    {% for appointment in upcoming_appointments %}
+    <div
+      class="modal fade"
+      id="appointmentModal{{ appointment.id }}"
+      tabindex="-1"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">Appointment Details</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6>Appointment Information</h6>
+                <p>
+                  <strong>Date:</strong> {{
+                  appointment.appointment_date.strftime('%B %d, %Y') }}
+                </p>
+                <p><strong>Time:</strong> {{ appointment.time_slot }}</p>
+                <p>
+                  <strong>Status:</strong>
+                  <span
+                    class="badge bg-{{ 'danger' if appointment.priority == 'emergency' else 'warning' if appointment.priority == 'urgent' else 'success' }}"
+                  >
+                    {{ appointment.status.upper() }}
+                  </span>
+                </p>
+                <p>
+                  <strong>Priority:</strong>
+                  <span
+                    class="badge bg-{{ 'danger' if appointment.priority == 'emergency' else 'warning' if appointment.priority == 'urgent' else 'info' }}"
+                  >
+                    {{ appointment.priority.upper() }}
+                  </span>
+                </p>
+              </div>
+              <div class="col-md-6">
+                <h6>Doctor Information</h6>
+                <p><strong>Name:</strong> Dr. {{ appointment.doctor.name }}</p>
+                <p>
+                  <strong>Specialization:</strong> {{
+                  appointment.doctor.specialization }}
+                </p>
+                <p>
+                  <strong>Qualification:</strong> {{
+                  appointment.doctor.qualification }}
+                </p>
+                <p>
+                  <strong>Experience:</strong> {{
+                  appointment.doctor.experience_years }} years
+                </p>
+                <p>
+                  <strong>Contact:</strong> {{ appointment.doctor.contact }}
+                </p>
+              </div>
+            </div>
+            {% if appointment.reason %}
+            <div class="row mt-3">
+              <div class="col-12">
+                <h6>Reason for Visit</h6>
+                <div class="alert alert-light">{{ appointment.reason }}</div>
+              </div>
+            </div>
+            {% endif %} {% if appointment.notes %}
+            <div class="row mt-3">
+              <div class="col-12">
+                <h6>Doctor's Notes</h6>
+                <div class="alert alert-info">{{ appointment.notes }}</div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          <div class="modal-footer">
+            {% if appointment.status == 'scheduled' %}
+            <form
+              method="POST"
+              action="{{ url_for('cancel_appointment', appointment_id=appointment.id) }}"
+              class="d-inline"
+            >
+              <button
+                type="submit"
+                class="btn btn-danger"
+                onclick="return confirm('Are you sure you want to cancel this appointment?')"
+              >
+                <i class="fas fa-times"></i> Cancel Appointment
+              </button>
+            </form>
+            {% endif %}
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+    <!-- Past Appointment Modals -->
+    {% for appointment in past_appointments %}
+    <div
+      class="modal fade"
+      id="pastAppointmentModal{{ appointment.id }}"
+      tabindex="-1"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-secondary text-white">
+            <h5 class="modal-title">Past Appointment Details</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6>Appointment Information</h6>
+                <p>
+                  <strong>Date:</strong> {{
+                  appointment.appointment_date.strftime('%B %d, %Y') }}
+                </p>
+                <p><strong>Time:</strong> {{ appointment.time_slot }}</p>
+                <p>
+                  <strong>Status:</strong>
+                  <span
+                    class="badge bg-{{ 'success' if appointment.status == 'completed' else 'danger' }}"
+                  >
+                    {{ appointment.status.upper() }}
+                  </span>
+                </p>
+              </div>
+              <div class="col-md-6">
+                <h6>Doctor Information</h6>
+                <p><strong>Name:</strong> Dr. {{ appointment.doctor.name }}</p>
+                <p>
+                  <strong>Specialization:</strong> {{
+                  appointment.doctor.specialization }}
+                </p>
+              </div>
+            </div>
+            {% if appointment.reason %}
+            <div class="row mt-3">
+              <div class="col-12">
+                <h6>Reason Reported</h6>
+                <div class="alert alert-light">{{ appointment.reason }}</div>
+              </div>
+            </div>
+            {% endif %} {% if appointment.notes %}
+            <div class="row mt-3">
+              <div class="col-12">
+                <h6>Doctor's Notes</h6>
+                <div class="alert alert-info">{{ appointment.notes }}</div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
