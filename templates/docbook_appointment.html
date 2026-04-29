@@ -1,278 +1,459 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Book Appointment | Clinixtech</title>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Appointment | Clinixtech</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
+  <style>
+    :root {
+      --navy:       #1341a0;
+      --accent:     #2a6dd9;
+      --accent-lt:  #e8f0fc;
+      --surface:    #ffffff;
+      --border:     #e4e9f0;
+      --muted:      #000000;
+      --text:       #1a2540;
+      --success:    #0e9f6e;
+      --success-bg: #ecfdf5;
+      --danger:     #c0392b;
+      --danger-bg:  #fef2f2;
+      --warn:       #b45309;
+      --warn-bg:    #fffbeb;
+    }
 
-    <style>
-      body {
-        background: linear-gradient(135deg, #3771a1 0%, #1f52b1 100%);
-        min-height: 100vh;
-        font-family: "Inter", sans-serif;
-      }
-      .navbar {
-        background: rgba(37, 99, 235, 0.95);
-      }
-      .navbar-brand {
-        color: white !important;
-        font-weight: 700;
-        font-size: 1.5rem;
-      }
-      .nav-link {
-        color: rgba(255, 255, 255, 0.9) !important;
-        font-weight: 500;
-      }
-      .container-main {
-        max-width: 800px;
-        margin: 40px auto;
-        padding: 20px;
-      }
-      .header-card,
-      .form-card {
-        background: white;
-        border-radius: 20px;
-        padding: 30px;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-        margin-bottom: 30px;
-      }
-      .header-card h2,
-      .form-card-title {
-        color: #1e293b;
-        font-weight: 700;
-      }
-      .form-card-title {
-        font-size: 1.3rem;
-        margin-bottom: 25px;
-        padding-bottom: 15px;
-        border-bottom: 3px solid #dc2626;
-      }
-      .form-label {
-        color: #475569;
-        font-weight: 600;
-        margin-bottom: 8px;
-        font-size: 0.9rem;
-      }
-      .form-control,
-      .form-select {
-        border: 2px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 12px 15px;
-        margin-bottom: 15px;
-      }
-      .form-control:focus,
-      .form-select:focus {
-        border-color: #dc2626;
-        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
-      }
-      .priority-badges {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 15px;
-      }
-      .priority-badge {
-        flex: 1;
-        text-align: center;
-        padding: 10px;
-        border-radius: 10px;
-        cursor: pointer;
-        border: 2px solid #e2e8f0;
-        font-weight: 600;
-        font-size: 0.85rem;
-      }
-      .priority-badge.emergency {
-        background: #fee2e2;
-        color: #dc2626;
-      }
-      .priority-badge.emergency.active {
-        background: #dc2626;
-        color: white;
-        border-color: #dc2626;
-      }
-      .priority-badge.urgent {
-        background: #fed7aa;
-        color: #ea580c;
-      }
-      .priority-badge.urgent.active {
-        background: #ea580c;
-        color: white;
-        border-color: #ea580c;
-      }
-      .priority-badge.normal {
-        background: #dbeafe;
-        color: #2563eb;
-      }
-      .priority-badge.normal.active {
-        background: #2563eb;
-        color: white;
-        border-color: #2563eb;
-      }
-      .btn-add-appointment {
-        width: 100%;
-        background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-        color: white;
-        border: none;
-        padding: 14px;
-        border-radius: 10px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-      .btn-add-appointment:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(220, 38, 38, 0.3);
-      }
-      .alert {
-        border-radius: 12px;
-        padding: 15px;
-        margin-bottom: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg sticky-top py-3">
-      <div class="container">
-        <a class="navbar-brand" href="#">Clinixtech</a>
-        <div class="collapse navbar-collapse justify-content-end">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('dashboard_doctor') }}">
-                <i class="fas fa-arrow-left"></i> Back to Dashboard
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <div class="container-main">
-      <div class="header-card">
-        <h2><i class="fas fa-calendar-alt"></i> Book New Appointment</h2>
-        <p>
-          Fill out the form to schedule a patient's visit and set its priority.
-        </p>
-      </div>
+    body {
+      font-family: 'Sora', sans-serif;
+      background: #f0f4f9;
+      color: var(--text);
+      min-height: 100vh;
+    }
 
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, message in messages %}
-      <div
-        class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show"
-      >
-        {{ message }}
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-        ></button>
-      </div>
-      {% endfor %} {% endif %} {% endwith %}
+    /* ── NAVBAR ── */
+    .navbar {
+      background: var(--navy);
+      padding: 0 32px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+      font-family: 'Sora', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+    .brand-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+    .nav-links { display: flex; align-items: center; gap: 24px; }
+    .nav-link {
+      text-decoration: none;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: #fff; }
+    .nav-link i { font-size: 0.75rem; }
 
-      <div class="form-card">
-        <h3 class="form-card-title">
-          <i class="fas fa-plus-circle"></i> Appointment Details
-        </h3>
+    /* ── LAYOUT ── */
+    .page-wrap {
+      max-width: 100%;
+      padding: 36px 48px 60px;
+    }
 
-        <!-- 🔹 Corrected POST action -->
-        <form method="POST" action="{{ url_for('docbook_appointment') }}">
-          <label class="form-label">Select Patient</label>
-          <select name="patient_id" class="form-select" required>
-            <option value="">Choose a patient...</option>
-            {% for patient in patients %}
-            <option value="{{ patient.id }}">
-              {{ patient.name }} (ID: {{ patient.id }})
-            </option>
-            {% endfor %}
-          </select>
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.75rem;
+      color: var(--navy);
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .page-header p { color: var(--muted); font-size: 0.875rem; }
 
-          <label class="form-label">Appointment Date</label>
-          <input
-            type="date"
-            name="appointment_date"
-            class="form-control"
-            required
-            value="{{ today }}"
-          />
+    /* ── ALERTS ── */
+    .alert {
+      border: 1px solid;
+      border-radius: 10px;
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .alert-success { background: var(--success-bg); border-color: #a7f3d0; color: var(--success); }
+    .alert-danger   { background: var(--danger-bg);  border-color: #fecaca; color: var(--danger);  }
 
-          <label class="form-label">Time Slot</label>
-          <select name="time_slot" class="form-select" required>
-            <option value="">Choose time...</option>
-            <option value="09:00 AM">09:00 AM</option>
-            <option value="10:00 AM">10:00 AM</option>
-            <option value="11:00 AM">11:00 AM</option>
-            <option value="12:00 PM">12:00 PM</option>
-            <option value="02:00 PM">02:00 PM</option>
-            <option value="03:00 PM">03:00 PM</option>
-            <option value="04:00 PM">04:00 PM</option>
-            <option value="05:00 PM">05:00 PM</option>
-          </select>
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px 40px;
+    }
 
-          <label class="form-label">Priority Level</label>
-          <input
-            type="hidden"
-            name="priority"
-            id="priority-input"
-            value="normal"
-            required
-          />
-          <div class="priority-badges">
-            <div
-              class="priority-badge emergency"
-              onclick="setPriority('emergency', event)"
-            >
-              🔴 Emergency
-            </div>
-            <div
-              class="priority-badge urgent"
-              onclick="setPriority('urgent', event)"
-            >
-              🟠 Urgent
-            </div>
-            <div
-              class="priority-badge normal active"
-              onclick="setPriority('normal', event)"
-            >
-              🔵 Normal
-            </div>
-          </div>
 
-          <label class="form-label">Reason for Visit</label>
-          <textarea
-            name="reason"
-            class="form-control"
-            rows="3"
-            placeholder="Brief description of the appointment reason"
-            required
-          ></textarea>
 
-          <button type="submit" class="btn-add-appointment">
-            <i class="fas fa-calendar-plus"></i> Schedule Appointment
-          </button>
-        </form>
-      </div>
+    /* ── INFO NOTE ── */
+    .info-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--accent-lt);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 28px;
+      font-size: 0.8rem;
+      color: #2a4a8a;
+      line-height: 1.5;
+    }
+    .info-note i { margin-top: 1px; color: var(--accent); flex-shrink: 0; }
+    .info-note a { color: var(--accent); }
+
+    /* ── SECTION DIVIDER ── */
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-section { margin-bottom: 28px; }
+
+    /* ── FORM ELEMENTS ── */
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 6px;
+    }
+    .req { color: var(--danger); margin-left: 2px; }
+    .form-control, .form-select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 13px;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: #fafbfc;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--accent);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(42,109,217,0.08);
+    }
+    textarea.form-control { resize: vertical; min-height: 80px; }
+
+    /* ── TIME SLOTS ── */
+    .slot-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 8px;
+    }
+    @media(max-width: 900px) { .slot-grid { grid-template-columns: repeat(5, 1fr); } }
+    @media(max-width: 500px) { .slot-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .slot-btn {
+      padding: 9px 6px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: #fafbfc;
+      color: #4a5568;
+      font-family: 'Sora', sans-serif;
+      font-weight: 500;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+    .slot-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
+    .slot-btn.selected { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+    .slots-loading, .slots-empty {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.83rem;
+      color: var(--muted);
+      background: #fafbfc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .slots-loading i { color: var(--accent); margin-right: 6px; }
+    .slots-empty a { color: var(--accent); }
+
+    /* ── PRIORITY ── */
+    .priority-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .priority-option { position: relative; }
+    .priority-option input[type="radio"] { display: none; }
+    .priority-option label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 10px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: #4a5568;
+      background: #fafbfc;
+      text-align: center;
+    }
+    .priority-option input:checked + label {
+      border-color: currentColor;
+      font-weight: 600;
+    }
+    .priority-emergency label { color: #b91c1c; }
+    .priority-emergency input:checked + label { background: #fef2f2; border-color: #fca5a5; }
+    .priority-urgent label { color: #c2410c; }
+    .priority-urgent input:checked + label { background: #fff7ed; border-color: #fdba74; }
+    .priority-normal label { color: var(--accent); }
+    .priority-normal input:checked + label { background: var(--accent-lt); border-color: #93c5fd; }
+
+    .priority-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .dot-emergency { background: #ef4444; }
+    .dot-urgent    { background: #f97316; }
+    .dot-normal    { background: var(--accent); }
+
+    /* ── SUBMIT ── */
+    .btn-submit {
+      width: 100%;
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .btn-submit:hover { background: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a class="brand" href="{{ url_for('dashboard_doctor') }}">
+      <span class="brand-dot"></span> Clinixtech
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="{{ url_for('doctor_appointments') }}">
+        <i class="fas fa-calendar-check"></i> Appointments
+      </a>
+      <a class="nav-link" href="{{ url_for('dashboard_doctor') }}">
+        <i class="fas fa-arrow-left"></i> Dashboard
+      </a>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <h1>Book Appointment</h1>
+      <p>Schedule a patient visit using your available time slots</p>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      function setPriority(level, event) {
-        document
-          .querySelectorAll(".priority-badge")
-          .forEach((badge) => badge.classList.remove("active"));
-        event.currentTarget.classList.add("active");
-        document.getElementById("priority-input").value = level;
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}{% for category, message in messages %}
+        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}">
+          <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+          {{ message }}
+        </div>
+      {% endfor %}{% endif %}
+    {% endwith %}
+
+    
+
+      <form method="POST"
+            action="{{ url_for('docbook_appointment') }}"
+            id="booking-form"
+            data-doctor-id="{{ doctor.id }}">
+
+        <!-- PATIENT & DATE -->
+        <div class="form-section">
+          <p class="section-label">Patient &amp; Date</p>
+
+          <div class="form-group">
+            <label class="form-label">Patient <span class="req">*</span></label>
+            <select name="patient_id" class="form-select" required>
+              <option value="">Select patient...</option>
+              {% for patient in patients %}
+                <option value="{{ patient.id }}">{{ patient.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Appointment Date <span class="req">*</span></label>
+            <input type="date" name="appointment_date" id="date-input"
+                   class="form-control" required
+                   min="{{ today }}" value="{{ today }}"/>
+          </div>
+        </div>
+
+        <!-- TIME SLOT -->
+        <div class="form-section">
+          <p class="section-label">Time Slot <span class="req">*</span></p>
+          <input type="hidden" name="time_slot" id="selected-time"/>
+          <div id="slots-container">
+            <div class="slots-loading">
+              <i class="fas fa-spinner fa-spin"></i> Loading available slots...
+            </div>
+          </div>
+        </div>
+
+        <!-- PRIORITY -->
+        <div class="form-section">
+          <p class="section-label">Priority</p>
+          <input type="hidden" name="priority" id="priority-input" value="normal"/>
+          <div class="priority-group">
+            <div class="priority-option priority-emergency">
+              <input type="radio" name="priority_vis" id="p-emergency" value="emergency"/>
+              <label for="p-emergency" onclick="setPriority('emergency')">
+                <span class="priority-dot dot-emergency"></span> Emergency
+              </label>
+            </div>
+            <div class="priority-option priority-urgent">
+              <input type="radio" name="priority_vis" id="p-urgent" value="urgent"/>
+              <label for="p-urgent" onclick="setPriority('urgent')">
+                <span class="priority-dot dot-urgent"></span> Urgent
+              </label>
+            </div>
+            <div class="priority-option priority-normal">
+              <input type="radio" name="priority_vis" id="p-normal" value="normal" checked/>
+              <label for="p-normal" onclick="setPriority('normal')">
+                <span class="priority-dot dot-normal"></span> Normal
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- REASON -->
+        <div class="form-section" style="margin-bottom: 20px;">
+          <p class="section-label">Reason for Visit</p>
+          <div class="form-group" style="margin-bottom:0;">
+            <textarea name="reason" class="form-control" rows="3"
+                      placeholder="Brief description of the appointment reason" required></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit">
+          <i class="fas fa-calendar-check" style="font-size:0.8rem;"></i>
+          Schedule Appointment
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const DOCTOR_ID  = document.getElementById('booking-form').dataset.doctorId;
+    const dateInput  = document.getElementById('date-input');
+    const slotsDiv   = document.getElementById('slots-container');
+    const hiddenTime = document.getElementById('selected-time');
+
+    function loadSlots() {
+      var date = dateInput.value;
+      if (!date) return;
+      hiddenTime.value = '';
+      slotsDiv.innerHTML = '<div class="slots-loading"><i class="fas fa-spinner fa-spin"></i> Loading available slots...</div>';
+
+      fetch('/get_doctor_times/' + DOCTOR_ID + '/' + date)
+        .then(function(r) { return r.json(); })
+        .then(function(slots) {
+          if (!slots || slots.length === 0) {
+            slotsDiv.innerHTML =
+              '<div class="slots-empty">' +
+              'No slots available for this date. ' +
+              '<a href="/doctor/schedule">Manage your schedule</a> to add slots.' +
+              '</div>';
+            return;
+          }
+          var html = '<div class="slot-grid">';
+          slots.forEach(function(slot) {
+            html += '<button type="button" class="slot-btn" onclick="selectSlot(this,\'' + slot + '\')">' + slot + '</button>';
+          });
+          html += '</div>';
+          slotsDiv.innerHTML = html;
+        })
+        .catch(function() {
+          slotsDiv.innerHTML =
+            '<div class="slots-empty" style="color:#c0392b;">' +
+            '<i class="fas fa-exclamation-circle" style="margin-right:6px;"></i>' +
+            'Unable to load slots. Please refresh the page.' +
+            '</div>';
+        });
+    }
+
+    function selectSlot(el, slot) {
+      document.querySelectorAll('.slot-btn').forEach(function(b) { b.classList.remove('selected'); });
+      el.classList.add('selected');
+      hiddenTime.value = slot;
+    }
+
+    function setPriority(level) {
+      document.getElementById('priority-input').value = level;
+      document.getElementById('p-' + level).checked = true;
+    }
+
+    document.getElementById('booking-form').addEventListener('submit', function(e) {
+      if (!hiddenTime.value) {
+        e.preventDefault();
+        alert('Please select a time slot before submitting.');
       }
-    </script>
-  </body>
+    });
+
+    dateInput.addEventListener('change', loadSlots);
+    loadSlots();
+  </script>
+</body>
 </html>

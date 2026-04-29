@@ -3,332 +3,764 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Doctor Dashboard | MediConnect</title>
-  
-  <!-- Bootstrap CSS - Pre-built styling framework for faster development -->
+  <title>Doctor Dashboard | Clinixtech</title>
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  
-  <!-- Font Awesome - Library for icons (calendar, user, search, etc.) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
-    /* === MAIN BODY STYLING === */
+    :root {
+      --navy:      #1341a0;
+      --accent:    #2a6dd9;
+      --accent-lt: #e8f0fc;
+      --surface:   #ffffff;
+      --border:    #e4e9f0;
+      --muted:     #000000;
+      --text:      #1a2540;
+      --success:   #0e9f6e;
+      --warning:   #f59e0b;
+      --danger:    #ef4444;
+      --purple:    #7c4dff;
+      --orange:    #f76c1b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      background: linear-gradient(135deg, #69a1ce 0%, #1f52b1 100%); /* Blue gradient background*/
-      min-height: 100vh;   /*so the page takes full screen height */
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Sora', sans-serif;
+      background: #f0f4f9;
+      color: var(--text);
+      min-height: 100vh;
     }
-    
-    /* === DASHBOARD CONTAINER === */
-    /* This holds all dashboard content and centers it on the page */
-    .dashboard-container {
-      max-width: 1200px;  /* Don't let it get too wide */
-      margin: 30px auto;  /* Center horizontally with 30px top/bottom spacing */
-      padding: 20px;      /* Add space inside the container */
-    }
-    
-    /* === DOCTOR PROFILE CARD === */
-    /* White card at the top showing doctor's information */
-    .profile-card {
-      background: white;
-      border-radius: 15px;  /* Rounded corners */
-      padding: 30px;        /* Space inside the card */
-      /* Shadow effect to make card "float" */
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      margin-bottom: 30px;  /* Space below the card */
-    }
-    
-    /* Container for doctor icon and info (side by side) */
-    .profile-header {
-      display: flex;          /* Put items in a row */
-      align-items: center;    /* Align items vertically in the center */
-      margin-bottom: 20px;    /* Space below */
-    }
-    
-    /* === DOCTOR ICON (Circle with doctor symbol) === */
-    .profile-icon {
-      width: 80px;
-      height: 80px;
-      /* Blue gradient background matching page theme */
-      background: linear-gradient(135deg, #3771a1 0%, #1f52b1 100%);
-      border-radius: 50%;     /* Make it a perfect circle */
-      display: flex;          /* Center the icon inside */
-      align-items: center;    /* Center vertically */
-      justify-content: center; /* Center horizontally */
-      margin-right: 20px;     /* Space between icon and text */
-    }
-    
-    /* The actual doctor icon inside the circle */
-    .profile-icon i {
-      font-size: 40px;   /* Make icon big */
-      color: white;      /* White color */
-    }
-    
-    /* === DOCTOR INFORMATION TEXT === */
-    /* Doctor's name (heading) */
-    .profile-info h2 {
-      margin: 0;            /* Remove default spacing */
-      color: #202020;          /* Dark gray text */
-      font-weight: 600;     /* Make it bold */
-    }
-    
-    /* Doctor details (specialization, license, hospital) */
-    .profile-info p {
-      margin: 5px 0;    /* Small spacing between lines */
-      color: #1b1a1a;      /* Medium gray text */
-    }
-    
-    /* === FUNCTIONS GRID === */
-    /* Container for the 6 function cards */
-    .functions-grid {
-      display: grid;  /* Use CSS Grid for layout */
-      /* Create columns that are at least 300px wide and fill available space */
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;      /* Space between cards */
-      margin-top: 20px;  /* Space above the grid */
-    }
-    
-    /* === INDIVIDUAL FUNCTION CARD === */
-    /* Each card (Appointments, Records, Prescriptions, etc.) */
-    .function-card {
-      background: white;
-      border-radius: 15px;  /* Rounded corners */
-      padding: 25px;        /* Space inside card */
-      /* Light shadow effect */
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      /* Smooth animation when hovering */
-      transition: all 0.3s ease;
-      cursor: pointer;      /* Show hand cursor on hover */
-      text-decoration: none; /* Remove underline from link */
-      color: inherit;       /* Use default text color */
-      display: block;       /* Make entire card clickable */
-    }
-    
-    /* === CARD HOVER EFFECT === */
-    /* When you hover over a card, it moves up and gets bigger shadow */
-    .function-card:hover {
-      transform: translateY(-5px);  /* Move up by 5 pixels */
-      /* Darker, bigger shadow when hovering */
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
-    
-    /* === FUNCTION ICON === */
-    /* The colored square icon at the top of each card */
-    .function-icon {
-      width: 60px;
+
+    /* ── NAVBAR ── */
+    .navbar {
+      background: var(--navy);
+      padding: 0 32px;
       height: 60px;
-      border-radius: 12px;   /* Slightly rounded corners */
-      display: flex;         /* Center the icon */
-      align-items: center;   /* Center vertically */
-      justify-content: center; /* Center horizontally */
-      margin-bottom: 15px;   /* Space below icon */
-      font-size: 28px;       /* Icon size */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-    
-    /* === CARD TEXT === */
-    /* Card title (e.g., "Patient Appointments") */
-    .function-card h4 {
-      color: #333;          /* Dark text */
-      margin-bottom: 10px;  /* Space below title */
-      font-weight: 600;     /* Bold text */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
     }
-    
-    /* Card description text */
-    .function-card p {
-      color: #666;      /* Gray text */
-      font-size: 14px;  /* Smaller text */
-      margin: 0;        /* No extra spacing */
+    .brand-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-link {
+      text-decoration: none;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.82rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: all 0.2s;
     }
-    
-    /* === ICON COLORS === */
-    /* Each function has a different gradient color */
-    
-    /* Appointments - Purple gradient */
-    .icon-appointments { 
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-      color: white; 
+    .nav-link:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    .nav-link.active { color: #fff; background: rgba(255,255,255,0.15); }
+    .nav-link i { font-size: 0.72rem; }
+
+    /* Dropdown */
+    .nav-dropdown { position: relative; }
+    .nav-dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      min-width: 180px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      overflow: hidden;
+      z-index: 200;
     }
-    
-    /* Records - Pink to red gradient */
-    .icon-records { 
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
-      color: white; 
+    .nav-dropdown:hover .nav-dropdown-menu { display: block; }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      transition: background 0.15s;
     }
-    
-    /* Prescriptions - Blue gradient */
-    .icon-prescription { 
-      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
-      color: white; 
+    .dropdown-item:hover { background: var(--accent-lt); color: var(--accent); }
+    .dropdown-item.danger { color: var(--danger); }
+    .dropdown-item.danger:hover { background: #fef2f2; }
+    .dropdown-divider { border-top: 1px solid var(--border); margin: 4px 0; }
+
+    /* ── PAGE WRAP ── */
+    .page-wrap {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 36px 32px 60px;
     }
-    
-    /* Update - Green gradient */
-    .icon-update { 
-      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); 
-      color: white; 
+
+    /* ── FLASH ── */
+    .flash-bar {
+      margin-bottom: 20px;
     }
-    
-    /* Search - Orange to yellow gradient */
-    .icon-edit { 
-      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); 
-      color: white; 
+    .alert {
+      border: 1px solid;
+      border-radius: 10px;
+      padding: 12px 18px;
+      margin-bottom: 10px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    
-    /* Schedule - Dark blue gradient */
-    .icon-schedule { 
-      background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); 
-      color: white; 
+    .alert-success { background: #ecfdf5; border-color: #a7f3d0; color: var(--success); }
+    .alert-danger   { background: #fef2f2; border-color: #fecaca; color: #c0392b; }
+
+    /* ── WELCOME BANNER ── */
+    .welcome-banner {
+      background: var(--navy);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
     }
-    
-    /* === LOGOUT BUTTON === */
-    /* Button in top-right corner */
-    .logout-btn {
-      position: absolute;   /* Position independently from other elements */
-      top: 5px;           /* 20px from top */
-      right: 5px;         /* 20px from right */
-      /* Semi-transparent white background */
-      background: rgba(255,255,255,0.2);
-      color: white;
-      border: 2px solid white;  /* White border */
-      padding: 10px 10px;       /* Space inside button */
-      border-radius: 25px;      /* Rounded pill shape */
-      text-decoration: none;    /* Remove underline */
-      /* Smooth color change on hover */
-      transition: all 0.3s ease;
+    .welcome-banner::before {
+      content: '';
+      position: absolute;
+      right: -60px; top: -60px;
+      width: 260px; height: 260px;
+      background: rgba(42,109,217,0.25);
+      border-radius: 50%;
     }
-    
-    /* Button hover effect - becomes solid white with blue text */
-    .logout-btn:hover {
-      background: white;
-      color: #667eea;
+    .welcome-banner::after {
+      content: '';
+      position: absolute;
+      right: 60px; bottom: -80px;
+      width: 180px; height: 180px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+    }
+    .welcome-inner { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .welcome-left h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+    }
+    .welcome-left p { color: rgba(255,255,255,0.6); font-size: 0.82rem; margin-bottom: 12px; }
+    .meta-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.85);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .meta-pill i { font-size: 0.68rem; opacity: 0.7; }
+    .welcome-right { text-align: right; }
+    .datetime-display p {
+      color: rgba(255,255,255,0.55);
+      font-size: 0.78rem;
+      font-weight: 500;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+    .datetime-display p span { color: rgba(255,255,255,0.9); }
+    .datetime-display i { font-size: 0.68rem; }
+
+    /* ── STAT CARDS ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    @media(max-width: 900px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+    @media(max-width: 500px) { .stats-row { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    .stat-card-inner { position: relative; z-index: 1; }
+    .stat-icon-wrap {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      margin-bottom: 14px;
+    }
+    .ic-blue   { background: var(--accent-lt); color: var(--accent); }
+    .ic-green  { background: #ecfdf5; color: var(--success); }
+    .ic-purple { background: #f3f0ff; color: var(--purple); }
+    .ic-orange { background: #fff4ed; color: var(--orange); }
+
+    .stat-label { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .stat-value { font-size: 2.2rem; font-weight: 800; color: var(--navy); letter-spacing: -0.03em; line-height: 1; }
+    .stat-bg-icon {
+      position: absolute;
+      right: 14px; bottom: 10px;
+      font-size: 3.5rem;
+      opacity: 0.05;
+      color: var(--navy);
+    }
+
+    /* ── BOTTOM GRID ── */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+    }
+    @media(max-width: 1000px) { .bottom-grid { grid-template-columns: 1fr; } }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .card:last-child { margin-bottom: 0; }
+    .card-head {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-head-title {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .card-head-action {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 4px 10px;
+      background: var(--accent-lt);
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .card-head-action:hover { background: #d4e5fb; }
+
+    /* ── QUICK ACTIONS ── */
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      padding: 20px;
+    }
+    @media(max-width: 800px) { .quick-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media(max-width: 500px) { .quick-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .quick-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 18px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .quick-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-lt);
+      transform: translateY(-2px);
+    }
+    .quick-icon {
+      width: 44px; height: 44px;
+      border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      color: #fff;
+    }
+    .qi-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .qi-2 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .qi-3 { background: linear-gradient(135deg, #4facfe, #00c6fb); }
+    .qi-4 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+    .qi-5 { background: linear-gradient(135deg, #fa709a, #fee140); }
+    .qi-6 { background: linear-gradient(135deg, #30cfd0, #330867); }
+
+    /* ── APPOINTMENTS TABLE ── */
+    .appt-table { width: 100%; border-collapse: collapse; }
+    .appt-table th {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding: 10px 16px;
+      background: #fafbfc;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    .appt-table td {
+      padding: 12px 16px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .appt-table tr:last-child td { border-bottom: none; }
+    .appt-table tbody tr { transition: background 0.15s; }
+    .appt-table tbody tr:hover { background: #fafbfc; }
+
+    .patient-cell { display: flex; align-items: center; gap: 10px; }
+    .patient-avatar {
+      width: 32px; height: 32px;
+      background: var(--accent-lt);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .patient-name { font-weight: 600; color: var(--navy); }
+
+    .time-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--accent-lt);
+      color: var(--accent);
+      border-radius: 6px;
+      padding: 3px 9px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .time-badge i { font-size: 0.65rem; }
+
+    .priority-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .p-emergency { background: #fef2f2; color: var(--danger); }
+    .p-urgent    { background: #fffbeb; color: var(--warning); }
+    .p-normal    { background: #f0f4f9; color: var(--muted); }
+
+    .reason-text {
+      color: var(--muted);
+      font-size: 0.78rem;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn-done {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #ecfdf5;
+      color: var(--success);
+      border: 1px solid #a7f3d0;
+      border-radius: 7px;
+      padding: 5px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Sora', sans-serif;
+      transition: all 0.15s;
+    }
+    .btn-done:hover { background: var(--success); color: #fff; border-color: var(--success); }
+
+    /* Empty state */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 20px;
+      text-align: center;
+    }
+    .empty-icon {
+      width: 60px; height: 60px;
+      background: var(--accent-lt);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      color: var(--accent);
+      margin-bottom: 14px;
+      opacity: 0.6;
+    }
+    .empty-state p { color: var(--muted); font-size: 0.82rem; margin-bottom: 14px; }
+    .btn-primary-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--navy);
+      color: #fff;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .btn-primary-sm:hover { opacity: 0.88; color: #fff; }
+
+
+
+    /* Schedule card */
+    .schedule-section { padding: 20px; }
+    .slot-grid-display { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .slot-tag {
+      background: var(--accent-lt);
+      color: var(--accent);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .btn-outline-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-decoration: none;
+      width: 100%;
+      justify-content: center;
+      transition: all 0.15s;
+      font-family: 'Sora', sans-serif;
+    }
+    .btn-outline-sm:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 16px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <!-- TEST FLASH MESSAGES -->
-  <div class="container mt-3">
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a class="brand" href="{{ url_for('dashboard_doctor') }}">
+      <span class="brand-dot"></span> Clinixtech
+    </a>
+    <div class="nav-links">
+      <a class="nav-link active" href="{{ url_for('dashboard_doctor') }}">
+        <i class="fas fa-home"></i> Dashboard
+      </a>
+      <a class="nav-link" href="{{ url_for('doctor_appointments') }}">
+        <i class="fas fa-calendar-check"></i> Appointments
+      </a>
+      <a class="nav-link" href="{{ url_for('doctor_prescriptions') }}">
+        <i class="fas fa-pills"></i> Prescriptions
+      </a>
+      <a class="nav-link" href="{{ url_for('doctor_schedule') }}">
+        <i class="fas fa-clock"></i> Schedule
+      </a>
+      <div class="nav-dropdown">
+        <a class="nav-link" href="#" style="cursor:pointer;">
+          <i class="fas fa-user-circle"></i> Dr. {{ session['doctor'] }}
+          <i class="fas fa-chevron-down" style="font-size:0.6rem;"></i>
+        </a>
+        <div class="nav-dropdown-menu">
+          <a class="dropdown-item" href="{{ url_for('doctor_editprofile') }}">
+            <i class="fas fa-user-edit"></i> Edit Profile
+          </a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item danger" href="{{ url_for('home') }}">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+
+    <!-- FLASH MESSAGES -->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
-        {% endfor %}
+        <div class="flash-bar">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}">
+              <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
       {% endif %}
     {% endwith %}
-  </div>
-  
-  <!-- === LOGOUT BUTTON === -->
-  <!-- Button to go back to home page (acts as logout) -->
-  <a href="{{ url_for('home') }}" class="logout-btn">
-    <i class="fas fa-home"></i> logout
-  </a>
 
-  <!-- === MAIN DASHBOARD CONTAINER === -->
-  <div class="dashboard-container">
-    
-    <!-- === DOCTOR PROFILE SECTION === -->
-    <div class="profile-card">
-      <div class="profile-header">
-        <!-- Doctor icon circle -->
-        <div class="profile-icon">
-          <i class="fas fa-user-md"></i> <!-- Doctor icon -->
+    <!-- WELCOME BANNER -->
+    <div class="welcome-banner">
+      <div class="welcome-inner">
+        <div class="welcome-left">
+          <h1>Welcome, Dr. {{ session['doctor'] }} 👨‍⚕️</h1>
+          <p>Here's your overview for today</p>
+          <div class="meta-pills">
+            <span class="meta-pill"><i class="fas fa-stethoscope"></i> {{ doctor.specialization if doctor.specialization else 'Not specified' }}</span>
+            <span class="meta-pill"><i class="fas fa-id-card"></i> {{ doctor.license_number if doctor.license_number else 'N/A' }}</span>
+            <span class="meta-pill"><i class="fas fa-hospital"></i> {{ doctor.current_hospital if doctor.current_hospital else 'Not specified' }}</span>
+          </div>
         </div>
-        
-        <!-- Doctor information -->
-        <div class="profile-info">
-          <!-- Display doctor's name from session -->
-          <h2>Dr. {{ session['doctor'] }}</h2>
-          
-          <!-- Display specialization (or "Not specified" if empty) -->
-          <p>
-            <i class="fas fa-stethoscope"></i> 
-            Specialization: {{ doctor.specialization if doctor.specialization else 'Not specified' }}
-          </p>
-          
-          <!-- Display license number (or "N/A" if empty) -->
-          <p>
-            <i class="fas fa-id-card"></i> 
-            License: {{ doctor.license_number if doctor.license_number else 'Not specified' }}
-          </p>
-          
-          <!-- Display current hospital (or "Not specified" if empty) -->
-          <p>
-            <i class="fas fa-hospital"></i> 
-            Hospital: {{ doctor.current_hospital if doctor.current_hospital else 'Not specified' }}
-          </p>
+        <div class="welcome-right">
+          <div class="datetime-display">
+            <p><i class="fas fa-calendar"></i> <span id="current-date">Loading...</span></p>
+            <p><i class="fas fa-clock"></i> <span id="current-time">Loading...</span></p>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- === FUNCTIONS GRID === -->
-    <!-- 6 cards for different doctor functions -->
-    <div class="functions-grid">
-      
-      <!-- FUNCTION 1: Patient Appointments -->
-      <!-- Clicking this card goes to appointments page -->
-      <a href="{{ url_for('doctor_appointments') }}" class="function-card">
-        <div class="function-icon icon-appointments">
-          <i class="fas fa-calendar-check"></i> <!-- Calendar icon -->
+    <!-- STAT CARDS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-card-inner">
+          <div class="stat-icon-wrap ic-blue"><i class="fas fa-calendar-check"></i></div>
+          <div class="stat-label">Today's Appointments</div>
+          <div class="stat-value">{{ todays_count }}</div>
         </div>
-        <h4>Patient Appointments</h4>
-        <p>View and manage all scheduled patient appointments</p>
-      </a>
-
-      <!-- FUNCTION 2: Patient Records -->
-      <!-- Clicking this card goes to patient records page -->
-      <a href="{{ url_for('doctor_patient_history') }}" class="function-card">
-        <div class="function-icon icon-records">
-          <i class="fas fa-folder-open"></i> <!-- Folder icon -->
+        <i class="fas fa-calendar-check stat-bg-icon"></i>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-inner">
+          <div class="stat-icon-wrap ic-green"><i class="fas fa-user-check"></i></div>
+          <div class="stat-label">Patients Seen</div>
+          <div class="stat-value">{{ patients_seen }}</div>
         </div>
-        <h4>Patient Medical History</h4>
-        <p>View complete patient medical history </p>
-      </a>
-
-      <!-- FUNCTION 3: Add Prescriptions -->
-      <!-- Clicking this card goes to prescription creation page -->
-      <a href="{{ url_for('doctor_prescriptions') }}" class="function-card">
-        <div class="function-icon icon-prescription">
-          <i class="fas fa-prescription-bottle-alt"></i> <!-- Medicine bottle icon -->
+        <i class="fas fa-user-check stat-bg-icon"></i>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-inner">
+          <div class="stat-icon-wrap ic-purple"><i class="fas fa-prescription-bottle-alt"></i></div>
+          <div class="stat-label">Prescriptions Written</div>
+          <div class="stat-value">{{ prescriptions_today }}</div>
         </div>
-        <h4>Prescriptions</h4>
-        <p>View and add prescriptions for patients</p>
-      </a>
-
-      <!-- FUNCTION 4: Book Appointment with the Patient -->
-      <!-- Clicking this card goes to patient update page -->
-      <a href="{{ url_for('docbook_appointment') }}" class="function-card">
-        <div class="function-icon icon-update">
-          <i class="fas fa-edit"></i> <!-- Edit icon -->
+        <i class="fas fa-prescription-bottle-alt stat-bg-icon"></i>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-inner">
+          <div class="stat-icon-wrap ic-orange"><i class="fas fa-calendar-week"></i></div>
+          <div class="stat-label">Appointments This Week</div>
+          <div class="stat-value">{{ appointments_this_week }}</div>
         </div>
-        <h4>Book Appointment</h4>
-        <p>Book Appointment with the Patient</p>
-      </a>
+        <i class="fas fa-calendar-week stat-bg-icon"></i>
+      </div>
+    </div>
 
-      <!-- FUNCTION 5: Edit Profile  -->
-      <!-- Clicking this card goes to patient search page -->
-      <a href="{{ url_for('doctor_editprofile') }}" class="function-card">
-        <div class="function-icon icon-edit">
-          <i class="fas fa-search"></i> <!-- Search icon -->
+    <!-- QUICK ACTIONS -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-head">
+        <span class="card-head-title">Quick Actions</span>
+      </div>
+      <div class="quick-grid">
+        <a href="{{ url_for('doctor_appointments') }}" class="quick-btn">
+          <div class="quick-icon qi-1"><i class="fas fa-calendar-check"></i></div>
+          Appointments
+        </a>
+        <a href="{{ url_for('doctor_patient_history') }}" class="quick-btn">
+          <div class="quick-icon qi-2"><i class="fas fa-folder-open"></i></div>
+          Medical History
+        </a>
+        <a href="{{ url_for('doctor_prescriptions') }}" class="quick-btn">
+          <div class="quick-icon qi-3"><i class="fas fa-prescription-bottle-alt"></i></div>
+          Prescriptions
+        </a>
+        <a href="{{ url_for('docbook_appointment') }}" class="quick-btn">
+          <div class="quick-icon qi-4"><i class="fas fa-calendar-plus"></i></div>
+          Book Appointment
+        </a>
+        <a href="{{ url_for('doctor_editprofile') }}" class="quick-btn">
+          <div class="quick-icon qi-5"><i class="fas fa-user-edit"></i></div>
+          Edit Profile
+        </a>
+        <a href="{{ url_for('doctor_schedule') }}" class="quick-btn">
+          <div class="quick-icon qi-6"><i class="fas fa-clock"></i></div>
+          Schedule
+        </a>
+      </div>
+    </div>
+
+    <!-- BOTTOM GRID -->
+    <div class="bottom-grid">
+
+      <!-- Appointments Table -->
+      <div>
+        <div class="card">
+          <div class="card-head">
+            <span class="card-head-title">Today's Appointments</span>
+            <a href="{{ url_for('doctor_appointments') }}" class="card-head-action">View All</a>
+          </div>
+
+          {% if todays_appointments %}
+          <table class="appt-table">
+            <thead>
+              <tr>
+                <th style="padding-left:20px;">Patient</th>
+                <th>Time</th>
+                <th>Priority</th>
+                <th>Reason</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for appt in todays_appointments %}
+              <tr>
+                <td style="padding-left:20px;">
+                  <div class="patient-cell">
+                    <div class="patient-avatar">{{ appt.patient.name[0].upper() }}</div>
+                    <span class="patient-name">{{ appt.patient.name }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="time-badge"><i class="fas fa-clock"></i> {{ appt.time_slot }}</span>
+                </td>
+                <td>
+                  {% if appt.priority == 'emergency' %}
+                    <span class="priority-badge p-emergency">Emergency</span>
+                  {% elif appt.priority == 'urgent' %}
+                    <span class="priority-badge p-urgent">Urgent</span>
+                  {% else %}
+                    <span class="priority-badge p-normal">Normal</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <span class="reason-text">{{ appt.reason[:50] }}{% if appt.reason|length > 50 %}…{% endif %}</span>
+                </td>
+                <td>
+                  <form method="POST" action="{{ url_for('complete_appointment', appointment_id=appt.id) }}" style="display:inline;">
+                    <button type="submit" class="btn-done">
+                      <i class="fas fa-check"></i> Done
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <div class="empty-state">
+            <div class="empty-icon"><i class="fas fa-calendar-times"></i></div>
+            <p>No appointments scheduled for today</p>
+            <a href="{{ url_for('docbook_appointment') }}" class="btn-primary-sm">
+              <i class="fas fa-plus"></i> Book Appointment
+            </a>
+          </div>
+          {% endif %}
         </div>
-        <h4>Edit Profile </h4>
-        <p>Edit and update your Profile Information</p>
-      </a>
+      </div>
 
-      <!-- FUNCTION 6: Schedule Management -->
-      <!-- Clicking this card goes to schedule management page -->
-      <a href="{{ url_for('doctor_schedule') }}" class="function-card">
-        <div class="function-icon icon-schedule">
-          <i class="fas fa-clock"></i> <!-- Clock icon -->
+      <!-- Right Column -->
+      <div class="right-col">
+
+
+        <!-- Schedule Card -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-head-title">Today's Schedule</span>
+            <a href="{{ url_for('doctor_schedule') }}" class="card-head-action">Edit</a>
+          </div>
+          <div class="schedule-section">
+            {% if todays_schedule %}
+            <div class="slot-grid-display">
+              {% for slot in todays_schedule %}
+                <span class="slot-tag">{{ slot.time_slot }}</span>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state" style="padding: 24px 0;">
+              <div class="empty-icon" style="width:44px;height:44px;font-size:1rem;"><i class="fas fa-calendar-week"></i></div>
+              <p style="margin-bottom: 12px;">No schedule set for today</p>
+            </div>
+            {% endif %}
+            <a href="{{ url_for('doctor_schedule') }}" class="btn-outline-sm">
+              <i class="fas fa-edit"></i> Manage Schedule
+            </a>
+          </div>
         </div>
-        <h4>Schedule Management</h4>
-        <p>Manage your availability and working hours</p>
-      </a>
-      
-    </div> <!-- End of functions grid -->
-  </div> <!-- End of dashboard container -->
 
-  <!-- Bootstrap JavaScript - Needed for interactive components -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    &copy; 2025 Clinixtech &mdash; All Rights Reserved
+  </footer>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById('current-date').textContent = now.toLocaleDateString(undefined, {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+      document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', {
+        hour: '2-digit', minute: '2-digit', hour12: true
+      });
+    }
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+  </script>
+
 </body>
 </html>

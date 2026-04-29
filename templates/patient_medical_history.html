@@ -4,265 +4,470 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Patient Records | Clinixtech</title>
-  
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
+    :root {
+      --navy:      #1341a0;
+      --accent:    #2a6dd9;
+      --accent-lt: #e8f0fc;
+      --surface:   #ffffff;
+      --border:    #e4e9f0;
+      --muted:     #7a869a;
+      --text:      #1a2540;
+      --success:   #0e9f6e;
+      --danger:    #ef4444;
+      --warning:   #f59e0b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      background: linear-gradient(135deg, #3771a1 0%, #1f52b1 100%);
+      font-family: 'Sora', sans-serif;
+      background: #f0f4f9;
+      color: var(--text);
       min-height: 100vh;
-      font-family: 'Inter', sans-serif;
     }
-    
+
+    /* ── NAVBAR ── */
     .navbar {
-      background: rgba(37, 99, 235, 0.95);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    
-    .navbar-brand, .nav-link {
-      color: white !important;
-      font-weight: 600;
-    }
-    
-    .container-main {
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-    
-    .header-card {
-      background: white;
-      border-radius: 15px;
-      padding: 30px;
-      margin-bottom: 30px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    }
-    
-    .header-card h2 {
-      color: #1e293b;
-      font-weight: 700;
-      margin: 0;
-    }
-    
-    .search-box {
-      position: relative;
-      margin-top: 20px;
-    }
-    
-    .search-box input {
-      width: 100%;
-      padding: 12px 45px 12px 20px;
-      border: 2px solid #e2e8f0;
-      border-radius: 10px;
-      font-size: 1rem;
-    }
-    
-    .search-box input:focus {
-      outline: none;
-      border-color: #1e40af;
-    }
-    
-    .search-box i {
-      position: absolute;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #94a3b8;
-    }
-    
-    .patient-card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 15px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-      transition: all 0.3s;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
-      display: block;
-    }
-    
-    .patient-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-    }
-    
-    .patient-avatar {
-      width: 60px;
+      background: var(--navy);
+      padding: 0 32px;
       height: 60px;
-      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-      border-radius: 50%;
       display: flex;
       align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 24px;
-      margin-right: 20px;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-    
-    .patient-info h5 {
-      color: #1e293b;
-      font-weight: 700;
-      margin-bottom: 5px;
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: #fff;
+      font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em;
     }
-    
-    .patient-info p {
-      color: #64748b;
-      margin: 3px 0;
-      font-size: 0.9rem;
+    .brand-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+    .nav-links { display: flex; align-items: center; gap: 24px; }
+    .nav-link {
+      text-decoration: none; color: rgba(255,255,255,0.6);
+      font-size: 0.85rem; font-weight: 500;
+      display: flex; align-items: center; gap: 6px; transition: color 0.2s;
     }
-    
-    .patient-stats {
-      display: flex;
-      gap: 20px;
-      margin-left: auto;
+    .nav-link:hover { color: #fff; }
+    .nav-link i { font-size: 0.75rem; }
+
+    /* ── LAYOUT ── */
+    .page-wrap { max-width: 100%; padding: 36px 48px 60px; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 {
+      font-size: 1.9rem; font-weight: 800; color: var(--navy);
+      letter-spacing: -0.03em; margin-bottom: 4px;
     }
-    
-    .stat-item {
-      text-align: center;
+    .page-header p { color: var(--muted); font-size: 0.875rem; }
+
+    /* ── ALERTS ── */
+    .alert {
+      border: 1px solid; border-radius: 10px; padding: 12px 18px;
+      margin-bottom: 20px; font-size: 0.875rem;
+      display: flex; align-items: center; gap: 10px;
     }
-    
-    .stat-item .number {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #2563eb;
+    .alert-success { background: #ecfdf5; border-color: #a7f3d0; color: var(--success); }
+    .alert-danger  { background: #fef2f2; border-color: #fecaca; color: #c0392b; }
+
+    /* ── OUTER CARD ── */
+    .outer-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 24px;
     }
-    
-    .stat-item .label {
-      font-size: 0.75rem;
-      color: #94a3b8;
-      text-transform: uppercase;
+    .outer-card-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
     }
-    
-    .btn-view {
-      background: #2563eb;
-      color: white;
-      padding: 8px 20px;
-      border-radius: 8px;
-      border: none;
-      font-weight: 600;
-      text-decoration: none;
-      display: inline-block;
-      transition: all 0.3s;
+    .outer-card-header h2 {
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); margin: 0;
     }
-    
-    .btn-view:hover {
-      background: #2563eb;
-      color: white;
+
+    /* ── PATIENT ROW ── */
+    .patient-row {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 24px; border-bottom: 1px solid var(--border);
+      text-decoration: none; color: var(--text); transition: background 0.15s;
     }
-    
-    .empty-state {
-      background: white;
-      border-radius: 15px;
-      padding: 80px 40px;
-      text-align: center;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    .patient-row:last-child { border-bottom: none; }
+    .patient-row:hover { background: #fafbfc; }
+
+    .patient-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--accent-lt); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; font-weight: 700; flex-shrink: 0;
     }
-    
-    .empty-state i {
-      font-size: 80px;
-      color: #e2e8f0;
-      margin-bottom: 20px;
+    .patient-name { font-weight: 700; font-size: 0.9rem; color: var(--navy); margin-bottom: 3px; }
+    .patient-meta {
+      font-size: 0.75rem; color: var(--muted);
+      display: flex; gap: 14px; flex-wrap: wrap;
     }
-    
-    .empty-state h4 {
-      color: #64748b;
+    .patient-meta span { display: flex; align-items: center; gap: 4px; }
+    .patient-meta i { font-size: 0.65rem; }
+
+    .view-pill {
+      margin-left: auto; flex-shrink: 0;
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--accent-lt); color: var(--accent);
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 0.72rem; font-weight: 600; transition: all 0.15s;
     }
+    .patient-row:hover .view-pill { background: var(--accent); color: #fff; }
+
+    /* ── BACK LINK ── */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--muted); font-size: 0.8rem; font-weight: 600;
+      text-decoration: none; margin-bottom: 24px; transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    /* ── PATIENT BANNER ── */
+    .patient-banner {
+      background: var(--navy); border-radius: 14px;
+      padding: 24px 28px; margin-bottom: 24px;
+      position: relative; overflow: hidden;
+    }
+    .patient-banner::before {
+      content: ''; position: absolute; right: -40px; top: -40px;
+      width: 200px; height: 200px;
+      background: rgba(42,109,217,0.2); border-radius: 50%;
+    }
+    .patient-banner::after {
+      content: ''; position: absolute; right: 80px; bottom: -60px;
+      width: 140px; height: 140px;
+      background: rgba(255,255,255,0.03); border-radius: 50%;
+    }
+    .banner-inner {
+      position: relative; z-index: 1;
+      display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    }
+    .banner-avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; color: #fff; flex-shrink: 0;
+    }
+    .banner-info h2 {
+      font-size: 1.3rem; font-weight: 800; color: #fff;
+      letter-spacing: -0.02em; margin-bottom: 4px;
+    }
+    .banner-pills { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
+    .banner-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.85); border-radius: 20px;
+      padding: 3px 10px; font-size: 0.72rem; font-weight: 500;
+    }
+    .banner-pill i { font-size: 0.65rem; opacity: 0.7; }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 12px; margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px 20px;
+    }
+    .stat-number {
+      font-size: 2rem; font-weight: 800; color: var(--navy);
+      letter-spacing: -0.03em; line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--muted); margin-top: 4px;
+    }
+
+    /* ── DATA TABLE ── */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th {
+      font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--muted);
+      padding: 10px 20px; background: #fafbfc;
+      border-bottom: 1px solid var(--border); text-align: left;
+    }
+    .data-table td {
+      padding: 13px 20px; font-size: 0.82rem; font-weight: 500;
+      border-bottom: 1px solid var(--border); vertical-align: middle;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tbody tr { transition: background 0.15s; }
+    .data-table tbody tr:hover { background: #fafbfc; }
+
+    /* ── BADGES ── */
+    .badge-pill {
+      display: inline-block; padding: 3px 10px;
+      border-radius: 20px; font-size: 0.7rem; font-weight: 700;
+    }
+    .badge-active    { background: #ecfdf5; color: var(--success); }
+    .badge-inactive  { background: #f0f4f9; color: var(--muted); }
+    .badge-completed { background: #ecfdf5; color: var(--success); }
+    .badge-scheduled { background: var(--accent-lt); color: var(--accent); }
+    .badge-cancelled { background: #fef2f2; color: var(--danger); }
+    .badge-urgent    { background: #fffbeb; color: var(--warning); }
+    .badge-normal    { background: #f0f4f9; color: var(--muted); }
+
+    .time-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: var(--accent-lt); color: var(--accent);
+      border-radius: 20px; padding: 3px 10px;
+      font-size: 0.72rem; font-weight: 600;
+    }
+    .time-pill i { font-size: 0.62rem; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { padding: 48px 24px; text-align: center; }
+    .empty-state i { font-size: 2.2rem; color: var(--border); display: block; margin-bottom: 12px; }
+    .empty-state p { color: var(--muted); font-size: 0.82rem; }
   </style>
 </head>
 <body>
 
-  <nav class="navbar navbar-expand-lg py-3">
-    <div class="container">
-      <a class="navbar-brand" href="#">
-        <i class="fas fa-clinic-medical"></i> Clinixtech
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a class="brand" href="{{ url_for('dashboard_doctor') }}">
+      <span class="brand-dot"></span> Clinixtech
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="{{ url_for('doctor_appointments') }}">
+        <i class="fas fa-calendar-check"></i> Appointments
       </a>
-      <div class="ms-auto">
-        <a class="nav-link" href="{{ url_for('dashboard_doctor') }}">
-          <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </a>
-      </div>
+      <a class="nav-link" href="{{ url_for('doctor_prescriptions') }}">
+        <i class="fas fa-pills"></i> Prescriptions
+      </a>
+      <a class="nav-link" href="{{ url_for('dashboard_doctor') }}">
+        <i class="fas fa-arrow-left"></i> Dashboard
+      </a>
     </div>
   </nav>
 
-  <div class="container-main">
-    
-    <div class="header-card">
-      <h2><i class="fas fa-users"></i> Patient Records</h2>
-      <p class="text-muted mb-0">View and manage patient medical histories</p>
-      
-      <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Search patients by name, CNIC, or contact..." onkeyup="searchPatients()">
-        <i class="fas fa-search"></i>
-      </div>
+  <div class="page-wrap">
+
+    <!-- FLASH -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}{% for category, message in messages %}
+        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}">
+          <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+          {{ message }}
+        </div>
+      {% endfor %}{% endif %}
+    {% endwith %}
+
+    <!-- ══════════════════════════════════ -->
+    <!--         PATIENT LIST VIEW         -->
+    <!-- ══════════════════════════════════ -->
+    {% if not patient %}
+
+    <div class="page-header">
+      <h1>Patient Records</h1>
+      <p>Select a patient to view their full medical history</p>
     </div>
 
-    <div id="patientList">
+    <div class="outer-card">
+      <div class="outer-card-header">
+        <h2>All Patients</h2>
+      </div>
+
       {% if patients %}
-        {% for patient in patients %}
-          <a href="{{ url_for('patient_medical_history', patient_id=patient.id) }}" class="patient-card">
-            <div class="d-flex align-items-center">
-              <div class="patient-avatar">
-                <i class="fas fa-user"></i>
-              </div>
-              <div class="patient-info flex-grow-1">
-                <h5>{{ patient.name }}</h5>
-                <p><i class="fas fa-id-card"></i> {{ patient.cnic }}</p>
-                <p><i class="fas fa-phone"></i> {{ patient.contact }}</p>
-                <p><i class="fas fa-envelope"></i> {{ patient.email }}</p>
-              </div>
-              <div class="patient-stats d-none d-md-flex">
-                <div class="stat-item">
-                  <div class="number">{{ patient.age }}</div>
-                  <div class="label">Age</div>
-                </div>
-                <div class="stat-item">
-                  <div class="number">
-                    <i class="fas fa-{{ 'male' if patient.gender == 'Male' else 'female' if patient.gender == 'Female' else 'genderless' }}"></i>
-                  </div>
-                  <div class="label">{{ patient.gender }}</div>
-                </div>
-              </div>
-              <div class="ms-3">
-                <span class="btn-view">
-                  <i class="fas fa-eye"></i> View History
-                </span>
-              </div>
+        {% for p in patients %}
+        <a href="{{ url_for('patient_medical_history', patient_id=p.id) }}" class="patient-row">
+          <div class="patient-avatar">{{ p.name[0].upper() }}</div>
+          <div style="flex:1;">
+            <div class="patient-name">{{ p.name }}</div>
+            <div class="patient-meta">
+              <span><i class="fas fa-id-card"></i> {{ p.cnic }}</span>
+              <span><i class="fas fa-phone"></i> {{ p.contact }}</span>
+              <span><i class="fas fa-envelope"></i> {{ p.email }}</span>
+              <span><i class="fas fa-birthday-cake"></i> {{ p.age }} yrs</span>
+              <span><i class="fas fa-venus-mars"></i> {{ p.gender }}</span>
             </div>
-          </a>
+          </div>
+          <span class="view-pill"><i class="fas fa-eye"></i> View History</span>
+        </a>
         {% endfor %}
       {% else %}
         <div class="empty-state">
           <i class="fas fa-user-slash"></i>
-          <h4>No patients found</h4>
-          <p class="text-muted">Patient records will appear here once they register</p>
+          <p>No patients registered yet</p>
         </div>
       {% endif %}
     </div>
 
+    <!-- ══════════════════════════════════ -->
+    <!--       DETAILED HISTORY VIEW       -->
+    <!-- ══════════════════════════════════ -->
+    {% else %}
+
+    <a href="{{ url_for('doctor_patient_history') }}" class="back-link">
+      <i class="fas fa-arrow-left"></i> Back to Patient List
+    </a>
+
+    <div class="page-header">
+      <h1>Medical History</h1>
+      <p>Full record for {{ patient.name }}</p>
+    </div>
+
+    <!-- Patient Banner -->
+    <div class="patient-banner">
+      <div class="banner-inner">
+        <div class="banner-avatar"><i class="fas fa-user"></i></div>
+        <div class="banner-info">
+          <h2>{{ patient.name }}</h2>
+          <div class="banner-pills">
+            <span class="banner-pill"><i class="fas fa-birthday-cake"></i> {{ patient.age }} years</span>
+            <span class="banner-pill"><i class="fas fa-venus-mars"></i> {{ patient.gender }}</span>
+            {% if patient.blood_group %}
+            <span class="banner-pill"><i class="fas fa-tint"></i> {{ patient.blood_group }}</span>
+            {% endif %}
+            <span class="banner-pill"><i class="fas fa-phone"></i> {{ patient.contact }}</span>
+            <span class="banner-pill"><i class="fas fa-envelope"></i> {{ patient.email }}</span>
+            <span class="banner-pill"><i class="fas fa-id-card"></i> {{ patient.cnic }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.total_visits }}</div>
+        <div class="stat-label">Total Visits</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.total_prescriptions }}</div>
+        <div class="stat-label">Prescriptions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.completed }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.scheduled }}</div>
+        <div class="stat-label">Scheduled</div>
+      </div>
+    </div>
+
+    <!-- Prescriptions -->
+    <div class="outer-card">
+      <div class="outer-card-header">
+        <h2>Prescriptions</h2>
+      </div>
+      {% if prescriptions %}
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Medication</th>
+            <th>Dosage</th>
+            <th>Frequency</th>
+            <th>Duration</th>
+            <th>Instructions</th>
+            <th>Date Issued</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rx in prescriptions %}
+          <tr>
+            <td style="font-weight:700; color:var(--navy);">{{ rx.medication }}</td>
+            <td>{{ rx.dosage }}</td>
+            <td>{{ rx.frequency }}</td>
+            <td>{{ rx.duration }}</td>
+            <td style="color:var(--muted); font-size:0.78rem;">
+              {{ rx.instructions if rx.instructions else '—' }}
+            </td>
+            <td><span class="time-pill"><i class="fas fa-calendar"></i> {{ rx.date.strftime('%Y-%m-%d %H:%M') }}</span></td>
+            <td>
+              {% if rx.active %}
+                <span class="badge-pill badge-active">Active</span>
+              {% else %}
+                <span class="badge-pill badge-inactive">Inactive</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">
+        <i class="fas fa-prescription-bottle"></i>
+        <p>No prescriptions issued to this patient yet</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Appointments -->
+    <div class="outer-card">
+      <div class="outer-card-header">
+        <h2>Appointment History</h2>
+      </div>
+      {% if appointments %}
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time Slot</th>
+            <th>Priority</th>
+            <th>Reason / Notes</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appt in appointments %}
+          <tr>
+            <td><span class="time-pill"><i class="fas fa-calendar"></i> {{ appt.appointment_date.strftime('%Y-%m-%d') }}</span></td>
+            <td>{{ appt.time_slot }}</td>
+            <td>
+              {% if appt.priority == 'emergency' %}
+                <span class="badge-pill badge-cancelled">Emergency</span>
+              {% elif appt.priority == 'urgent' %}
+                <span class="badge-pill badge-urgent">Urgent</span>
+              {% else %}
+                <span class="badge-pill badge-normal">Normal</span>
+              {% endif %}
+            </td>
+            <td style="color:var(--muted); font-size:0.78rem; max-width:320px;">
+              {{ appt.reason[:100] }}{% if appt.reason|length > 100 %}…{% endif %}
+            </td>
+            <td>
+              {% if appt.status == 'completed' %}
+                <span class="badge-pill badge-completed">Completed</span>
+              {% elif appt.status == 'scheduled' %}
+                <span class="badge-pill badge-scheduled">Scheduled</span>
+              {% else %}
+                <span class="badge-pill badge-cancelled">{{ appt.status|capitalize }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">
+        <i class="fas fa-calendar-times"></i>
+        <p>No appointments found for this patient</p>
+      </div>
+      {% endif %}
+    </div>
+
+    {% endif %}
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <script>
-    function searchPatients() {
-      const input = document.getElementById('searchInput');
-      const filter = input.value.toLowerCase();
-      const patientCards = document.querySelectorAll('.patient-card');
-      
-      patientCards.forEach(card => {
-        const text = card.textContent.toLowerCase();
-        if (text.includes(filter)) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
-  </script>
 </body>
 </html>
