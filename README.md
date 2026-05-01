@@ -1,4 +1,3 @@
-
 ````markdown
 # 🏥 ClinixTech: Enterprise Clinic Management & Triage System
 
@@ -9,7 +8,6 @@
 ![Status](https://img.shields.io/badge/Deployment-Active-success.svg)
 
 <p align="center">
-  <!-- Replace with actual image path if available -->
   <img src="images/hero_image.png" alt="ClinixTech Enterprise Architecture" width="850"/>
 </p>
 
@@ -17,101 +15,63 @@
 
 ## 📖 Executive Summary
 
-**ClinixTech** is an enterprise-grade Clinic Management and Triage System designed to eliminate administrative bottlenecks in modern healthcare environments. Unlike traditional First-Come-First-Serve (FCFS) systems, ClinixTech applies **Data Structures and Algorithms (DSA)** to mathematically prioritize patients based on medical urgency, ensuring life-critical cases receive immediate attention.
+**ClinixTech** is an enterprise-grade Clinic Management and Triage System designed to eliminate administrative inefficiencies in healthcare facilities. Instead of relying on traditional First-Come-First-Serve (FCFS) models, the system applies **Data Structures and Algorithms (DSA)** to prioritize patients based on medical urgency, ensuring critical cases receive immediate attention.
 
-The system is backed by an **Enterprise Oracle Database**, guaranteeing strict data integrity, concurrency control, and ACID-compliant transactions.
+The system is backed by an **Enterprise Oracle Database**, ensuring strong consistency, concurrency control, and ACID-compliant transactions.
 
-This project was developed as a **Complex Engineering Problem (CEP)** to fulfill academic requirements for:
+This project was developed as a **Complex Engineering Problem (CEP)** for:
 
-- **Software Construction and Development (SE-312)**
-- **Database Management Systems (SE-204)**
+- Software Construction and Development (SE-312)  
+- Database Management Systems (SE-204)
 
 ---
 
 ## 🌍 UN Sustainable Development Goals (SDG) Alignment
 
 - **SDG 3 – Good Health & Well-being**  
-  Reduces medical wait-time risks through algorithmic priority-based triage using a Min-Heap.
+  Reduces patient wait-time risks using algorithmic priority-based triage.
 
 - **SDG 12 – Responsible Consumption & Production**  
-  Enforces a 100% paperless workflow via dynamic server-side PDF generation for prescriptions and medical records.
+  Ensures a paperless clinical workflow through dynamic PDF generation.
 
 ---
 
-## 💻 Software Construction & Development (SCD) Architecture
+## 💻 Software Construction & Development Architecture
 
-ClinixTech follows a strict **Monolithic Model–View–Controller (MVC)** architecture optimized for enterprise deployment.
+ClinixTech follows a strict **Monolithic Model–View–Controller (MVC)** architecture.
 
-### Core Components
-
-- **Controller Layer (Flask)**  
-  Handles WSGI requests, routes application logic, and invokes clinical algorithms.
-
-- **Algorithmic Patient Triage (Min-Heap)**  
-  Uses Python’s `heapq` to dynamically prioritize patients:  
-  `Emergency > Urgent > Normal`  
-  Time Complexity: **O(N log N)**
-
-- **Prescription Memory Stack (LIFO)**  
-  Doctors issue prescriptions using an in-memory stack, enabling instant undo functionality before database commit.
-
-- **Security & Authentication**  
-  - Password hashing via `werkzeug.security`  
-  - Role-Based Access Control (RBAC)  
-  - Route protection using `@login_required` decorators
-
-- **Dynamic Document Generation**  
-  Medical histories and prescriptions are generated as secure PDFs using **ReportLab**.
+- **Controller Layer (Flask):** Handles routing, business logic, and algorithm execution.
+- **Patient Triage (Min-Heap):** Uses Python `heapq` to prioritize patients  
+  *(Emergency > Urgent > Normal)* with time complexity **O(N log N)**.
+- **Prescription Stack (LIFO):** Enables doctors to undo prescriptions before database commit.
+- **Authentication & Security:** Password hashing via `werkzeug.security` with Role-Based Access Control (RBAC).
+- **PDF Generation:** Secure prescriptions and medical records generated using **ReportLab**.
 
 ---
 
-## 🗄️ Database Management Systems (DBMS) Architecture
+## 🗄️ Database Management Systems Architecture
 
-ClinixTech utilizes an **Enterprise Oracle Database** based on the **ANSI/SPARC Three-Schema Architecture**.
+ClinixTech uses an **Enterprise Oracle Database** following the **ANSI/SPARC Three-Schema Architecture**.
 
-### Database Features
-
-- **BCNF Normalization**  
-  The database consists of 10 fully normalized tables including:
-  - Patient
-  - Doctor
-  - Appointment
-  - Vitals
-  - Payment
-
-- **Multi-Version Concurrency Control (MVCC)**  
-  Oracle Undo Segments and Redo Logs allow concurrent reads and writes without row-level locking conflicts.
-
-- **ACID Transaction Management**  
-  Multi-step operations are executed atomically using `db.session.commit()`.  
-  Any integrity violation triggers an automatic rollback.
-
-- **Advanced Analytical SQL**  
-  Supports:
-  - Nested subqueries  
-  - Aggregations (`SUM`, `COUNT`)  
-  - Complex `JOIN` operations for reporting and auditing
-
-- **Query Optimization (B-Tree Indexing)**  
-  Composite indexes on:
-  - `doctor_id`
-  - `status`
-  - `priority`  
-  Ensures Index Range Scans instead of Full Table Scans.
+- **BCNF Normalization:** Fully normalized schema with tables such as Patient, Doctor, Appointment, Vitals, and Payment.
+- **MVCC:** Oracle Undo and Redo mechanisms allow concurrent transactions without blocking.
+- **ACID Transactions:** Atomic multi-step operations with rollback on integrity failure.
+- **Advanced SQL:** Supports joins, nested subqueries, aggregations, and audit reporting.
+- **B-Tree Indexing:** Composite indexes on `doctor_id`, `status`, and `priority` for optimized query execution.
 
 ---
 
-## ⚙️ Local Setup & Installation Guide
+## ⚙️ Local Setup & Installation
 
 ### Prerequisites
 
-1. **Python 3.10+**
-2. **Oracle Database** (Local or Oracle Cloud ATP)
-3. **Git**
+- Python 3.10+
+- Oracle Database (Local or Cloud)
+- Git
 
 ---
 
-### Step 1: Clone the Repository
+### Clone the Repository
 
 ```bash
 git clone https://github.com/mubashir349/Clinixtech.git
@@ -120,7 +80,7 @@ cd Clinixtech
 
 ---
 
-### Step 2: Create and Activate Virtual Environment
+### Create Virtual Environment
 
 ```bash
 python -m venv venv
@@ -130,7 +90,7 @@ venv\Scripts\activate         # Windows
 
 ---
 
-### Step 3: Install Dependencies
+### Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -138,9 +98,9 @@ pip install -r requirements.txt
 
 ---
 
-### Step 4: Configure Environment Variables
+### Configure Environment Variables
 
-Create a `.env` file in the root directory:
+Create a `.env` file:
 
 ```env
 FLASK_APP=app.py
@@ -151,13 +111,13 @@ DATABASE_URL=oracle+cx_oracle://username:password@host:port/?service_name=ORCL
 
 ---
 
-### Step 5: Run the Application
+### Run the Application
 
 ```bash
 flask run
 ```
 
-Access the system at:
+Open in browser:
 
 ```
 http://127.0.0.1:5000
@@ -165,42 +125,27 @@ http://127.0.0.1:5000
 
 ---
 
-## 📊 Key Technical Highlights
+## 📊 Key Features
 
-* Priority Queue implementation using Min-Heap
-* Stack-based prescription memory
+* Algorithmic patient triage using Min-Heap
+* Stack-based prescription handling
 * Oracle MVCC and ACID compliance
-* Secure RBAC authentication system
-* Enterprise-grade indexing and query optimization
-* Fully paperless clinical workflow
-
----
-
-## 📌 Academic Relevance
-
-This project satisfies **Complex Engineering Problem (CEP)** criteria by incorporating:
-
-* Advanced algorithmic design
-* Enterprise database engineering
-* Concurrent transaction handling
-* Real-world healthcare constraints
-* Secure and scalable system architecture
+* Secure RBAC authentication
+* Optimized SQL with B-Tree indexing
+* Fully paperless clinical operations
 
 ---
 
 ## 📜 License
 
-This project is developed for academic and educational purposes.
+Developed for academic and educational purposes.
 
 ---
 
 ## 👨‍💻 Authors
 
-Developed by **ClinixTech Development Team**
+ClinixTech Development Team
 Department of Software Engineering
 
----
-
 ```
-
-
+```
