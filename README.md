@@ -1,6 +1,3 @@
-Below is a **clean, copy-paste–ready `README.md` file** in proper Markdown. You can paste this directly into your GitHub repository without modification.
-
----
 
 ````markdown
 # 🏥 ClinixTech: Enterprise Clinic Management & Triage System
@@ -206,11 +203,4 @@ Department of Software Engineering
 
 ```
 
-If you want, I can also:
-- Simplify this README for recruiters  
-- Create a **CEP justification section**  
-- Add **screenshots and folder structure**  
-- Write a **separate DBMS or SCD report section**  
 
-Just tell me what you need next.
-```
