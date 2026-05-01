@@ -1,4 +1,4 @@
-````markdown
+
 # 🏥 ClinixTech: Enterprise Clinic Management & Triage System
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
