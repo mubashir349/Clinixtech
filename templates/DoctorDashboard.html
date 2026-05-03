@@ -666,8 +666,8 @@
               <tr>
                 <td style="padding-left:20px;">
                   <div class="patient-cell">
-                    <div class="patient-avatar">{{ appt.patient.name[0].upper() }}</div>
-                    <span class="patient-name">{{ appt.patient.name }}</span>
+                    <div class="patient-avatar">{{ appt.patient_name[0].upper() }}</div>
+                    <span class="patient-name">{{ appt.patient_name }}</span>
                   </div>
                 </td>
                 <td>
@@ -686,7 +686,7 @@
                   <span class="reason-text">{{ appt.reason[:50] }}{% if appt.reason|length > 50 %}…{% endif %}</span>
                 </td>
                 <td>
-                  <form method="POST" action="{{ url_for('complete_appointment', appointment_id=appt.id) }}" style="display:inline;">
+                  <form method="POST" action="{{ url_for('complete_appointment', appointment_id=appt.appointment_id) }}" style="display:inline;">
                     <button type="submit" class="btn-done">
                       <i class="fas fa-check"></i> Done
                     </button>
@@ -722,7 +722,13 @@
             {% if todays_schedule %}
             <div class="slot-grid-display">
               {% for slot in todays_schedule %}
-                <span class="slot-tag">{{ slot.time_slot }}</span>
+                <span class="slot-tag">
+                  <i class="fas fa-clock" style="font-size:0.65rem;margin-right:3px;"></i>
+                  {{ slot.start_time }} – {{ slot.end_time }}
+                  {% if slot.shift_number > 1 %}
+                    <span style="font-size:0.65rem;opacity:0.7;">(Shift {{ slot.shift_number }})</span>
+                  {% endif %}
+                </span>
               {% endfor %}
             </div>
             {% else %}

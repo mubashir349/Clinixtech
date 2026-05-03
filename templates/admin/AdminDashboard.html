@@ -5,11 +5,185 @@
   <title>Admin Dashboard | ClinicMS</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-style.css') }}">
+  <style>
+    :root {
+      --accent:      #2563eb;
+      --accent-soft: #eff6ff;
+      --emerald:     #059669;
+      --emerald-soft:#ecfdf5;
+      --amber:       #d97706;
+      --amber-soft:  #fffbeb;
+      --violet:      #7c3aed;
+      --violet-soft: #f5f3ff;
+      --border:      #e2e8f0;
+      --bg:          #f1f5f9;
+      --surface:     #ffffff;
+      --text-head:   #0f172a;
+      --text-body:   #334155;
+      --text-muted:  #64748b;
+      --radius:      12px;
+      --radius-sm:   8px;
+      --shadow-sm:   0 1px 3px rgba(15,28,46,.07), 0 1px 2px rgba(15,28,46,.04);
+      --shadow:      0 4px 16px rgba(15,28,46,.10);
+    }
+
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text-body); }
+
+    /* ── NAVBAR tweaks (keep existing structure) ── */
+    .gradient-blue { background: linear-gradient(135deg, #527fbe 0%, #114dce 100%) !important; }
+    .navbar-brand  { font-weight: 700; font-size: 1.1rem; }
+    .nav-link      { font-size: 0.875rem; font-weight: 500; padding: 7px 11px !important; border-radius: 6px; transition: background .15s; }
+    .nav-link:hover, .nav-link.active { background: rgba(255,255,255,.12) !important; }
+    .dropdown-menu { border: 1px solid var(--border); box-shadow: var(--shadow); border-radius: var(--radius-sm); padding: 4px; }
+    .dropdown-item { border-radius: 6px; font-size: 0.85rem; padding: 7px 12px; }
+
+    /* ── WELCOME ── */
+    .welcome-row {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+    }
+    .welcome-row h1 { font-size: 1.65rem; font-weight: 800; color: var(--text-head); margin: 0; }
+    .welcome-row p  { color: var(--text-muted); margin: 4px 0 0; font-size: 0.88rem; }
+    .date-chip {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 7px 16px;
+      font-size: 0.82rem; color: var(--text-muted); white-space: nowrap;
+    }
+    .date-chip strong { color: var(--text-head); }
+
+    /* ── STAT CARDS ── */
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px 22px 18px;
+      box-shadow: var(--shadow-sm); position: relative;
+      overflow: hidden; transition: box-shadow .2s, transform .2s; height: 100%;
+    }
+    .stat-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+    .stat-card::after {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .sc-blue::after   { background: var(--accent);  }
+    .sc-green::after  { background: var(--emerald); }
+    .sc-amber::after  { background: var(--amber);   }
+    .sc-violet::after { background: var(--violet);  }
+
+    .stat-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; margin-bottom: 14px;
+    }
+    .sc-blue   .stat-icon { background: var(--accent-soft);  color: var(--accent);  }
+    .sc-green  .stat-icon { background: var(--emerald-soft); color: var(--emerald); }
+    .sc-amber  .stat-icon { background: var(--amber-soft);   color: var(--amber);   }
+    .sc-violet .stat-icon { background: var(--violet-soft);  color: var(--violet);  }
+
+    .stat-label { font-size: 0.7rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+    .stat-value { font-size: 2.4rem; font-weight: 800; color: var(--text-head); line-height: 1; }
+    .stat-bg-icon {
+      position: absolute; bottom: -10px; right: -6px;
+      font-size: 5rem; opacity: .04; pointer-events: none; color: var(--text-head);
+    }
+
+    /* ── PANEL ── */
+    .panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow-sm);
+      overflow: hidden; height: 100%;
+    }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-bottom: 1px solid var(--border);
+      background: #fafbfc;
+    }
+    .panel-title {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 0.9rem; font-weight: 700; color: var(--text-head);
+    }
+    .panel-icon {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 0.88rem;
+    }
+    .pi-blue   { background: var(--accent-soft);  color: var(--accent);  }
+    .pi-green  { background: var(--emerald-soft); color: var(--emerald); }
+    .pi-amber  { background: var(--amber-soft);   color: var(--amber);   }
+
+    .view-btn {
+      font-size: 0.75rem; font-weight: 600; color: var(--accent);
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 4px 11px; text-decoration: none; background: var(--surface);
+      transition: all .15s;
+    }
+    .view-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ── TABLE ── */
+    .pro-table { width: 100%; border-collapse: collapse; }
+    .pro-table thead th {
+      padding: 10px 14px; font-size: 0.69rem; font-weight: 700;
+      letter-spacing: .07em; text-transform: uppercase;
+      color: var(--text-muted); background: #f8fafc;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    .pro-table thead th:first-child { padding-left: 20px; }
+    .pro-table tbody tr { border-bottom: 1px solid #f1f5f9; transition: background .12s; }
+    .pro-table tbody tr:last-child  { border-bottom: none; }
+    .pro-table tbody tr:hover { background: #f8fafc; }
+    .pro-table td { padding: 12px 14px; vertical-align: middle; }
+    .pro-table td:first-child { padding-left: 20px; }
+
+    .cell-name  { font-size: 0.875rem; font-weight: 600; color: var(--text-head); }
+    .cell-sub   { font-size: 0.73rem; color: var(--text-muted); margin-top: 1px; }
+    .cell-time  { font-size: 0.82rem; font-weight: 700; font-family: monospace; color: var(--text-body); }
+    .cell-date  { font-size: 0.82rem; color: var(--text-body); }
+
+    /* Priority */
+    .prio { display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+    .prio-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .prio-emergency { background: #fff1f2; color: #be123c; } .prio-emergency .prio-dot { background: #be123c; }
+    .prio-urgent    { background: #fff7ed; color: #c2410c; } .prio-urgent    .prio-dot { background: #c2410c; }
+    .prio-normal    { background: var(--accent-soft); color: #1d4ed8; } .prio-normal .prio-dot { background: #1d4ed8; }
+
+    /* Status */
+    .st { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .st-scheduled { background: var(--accent-soft);  color: #1d4ed8; }
+    .st-completed { background: var(--emerald-soft); color: #065f46; }
+    .st-cancelled { background: #f1f5f9;             color: #64748b; }
+    .st-pending   { background: var(--amber-soft);   color: #92400e; }
+
+    /* ── DOCTOR CARDS ── */
+    .doc-card {
+      background: #f8fafc; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 10px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .doc-card:hover { border-color: #bfdbfe; box-shadow: 0 2px 8px rgba(37,99,235,.07); }
+    .doc-card:last-child { margin-bottom: 0; }
+    .doc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .doc-name { font-size: 0.86rem; font-weight: 700; color: var(--text-head); }
+    .doc-spec { font-size: 0.72rem; color: var(--text-muted); margin-top: 1px; }
+    .doc-appt { background: var(--accent-soft); color: var(--accent); font-size: 0.67rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+    .doc-time { margin-top: 7px; font-size: 0.74rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+    .doc-time i { color: var(--accent); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { text-align: center; padding: 44px 20px; color: var(--text-muted); }
+    .empty-state i { font-size: 2.4rem; opacity: .35; display: block; margin-bottom: 10px; }
+    .empty-state p { font-size: 0.86rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 14px;
+      font-size: 0.76rem; color: var(--text-muted);
+      border-top: 1px solid var(--border); margin-top: 8px;
+    }
+  </style>
 </head>
 <body>
 
-<!-- Top Navigation Bar -->
+<!-- ── NAVBAR (original structure, untouched) ── -->
 <nav class="navbar navbar-expand-lg navbar-dark gradient-blue py-3 shadow-sm">
   <div class="container-fluid">
     <a class="navbar-brand d-flex align-items-center" href="#">
@@ -24,8 +198,6 @@
         <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_patients') }}"><i class="bi bi-person-hearts me-1"></i> Patients</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_doctors') }}"><i class="bi bi-person-badge me-1"></i> Doctors</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_appointments') }}"><i class="bi bi-calendar-check me-1"></i> Appointments</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_payments') }}"><i class="bi bi-cash-stack me-1"></i> Payments</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_rooms') }}"><i class="bi bi-building me-1"></i> Rooms</a></li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
             <i class="bi bi-person-circle me-1"></i> {{ session.get('admin_name') }}
@@ -42,159 +214,180 @@
 
 <main class="container py-4">
 
-  <!-- Welcome Message -->
-  <div class="text-center mb-4">
-    <h1 class="fw-bold">Welcome Back, {{ session.get('admin_name') }}</h1>
-    <p class="text-muted">Manage your clinic efficiently from one place.</p>
+  <!-- Welcome -->
+  <div class="welcome-row">
+    <div>
+      <h1>Welcome Back, {{ session.get('admin_name') }} 👋</h1>
+      <p>Here's what's happening at your clinic today.</p>
+    </div>
+    <div class="date-chip"><strong>{{ day_name }}</strong>, {{ today.strftime('%d %B %Y') }}</div>
   </div>
 
-  <!-- Summary Cards Row -->
-  <div class="row g-4 mb-4">
-    <div class="col-lg-3 col-md-6 col-sm-12">
-      <div class="dash-card gradient-red text-white shadow-sm">
-        <div class="icon-box mb-3"><i class="bi bi-calendar-check"></i></div>
-        <h5 class="fw-bold">Upcoming Appointments</h5>
-        <h2 class="fw-bold">0</h2>
-        <i class="bi bi-calendar-check background-icon"></i>
+  <!-- Stat Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-lg-3 col-md-6">
+      <div class="stat-card sc-blue">
+        <div class="stat-icon"><i class="bi bi-calendar-check"></i></div>
+        <div class="stat-label">Upcoming Appointments</div>
+        <div class="stat-value">{{ upcoming_count }}</div>
+        <i class="bi bi-calendar-check stat-bg-icon"></i>
       </div>
     </div>
-    <div class="col-lg-3 col-md-6 col-sm-12">
-      <div class="dash-card gradient-green text-white shadow-sm">
-        <div class="icon-box mb-3"><i class="bi bi-person-badge"></i></div>
-        <h5 class="fw-bold">Available Doctors</h5>
-        <h2 class="fw-bold">0</h2>
-        <i class="bi bi-person-badge background-icon"></i>
+    <div class="col-lg-3 col-md-6">
+      <div class="stat-card sc-green">
+        <div class="stat-icon"><i class="bi bi-person-badge"></i></div>
+        <div class="stat-label">Total Doctors</div>
+        <div class="stat-value">{{ total_doctors }}</div>
+        <i class="bi bi-person-badge stat-bg-icon"></i>
       </div>
     </div>
-    <div class="col-lg-3 col-md-6 col-sm-12">
-      <div class="dash-card gradient-yellow text-white shadow-sm">
-        <div class="icon-box mb-3"><i class="bi bi-people"></i></div>
-        <h5 class="fw-bold">Patients Today</h5>
-        <h2 class="fw-bold">0</h2>
-        <i class="bi bi-people background-icon"></i>
+    <div class="col-lg-3 col-md-6">
+      <div class="stat-card sc-amber">
+        <div class="stat-icon"><i class="bi bi-people"></i></div>
+        <div class="stat-label">Patients Today</div>
+        <div class="stat-value">{{ patients_today }}</div>
+        <i class="bi bi-people stat-bg-icon"></i>
       </div>
     </div>
-    <div class="col-lg-3 col-md-6 col-sm-12">
-      <div class="dash-card gradient-blue text-white shadow-sm">
-        <div class="icon-box mb-3"><i class="bi bi-building"></i></div>
-        <h5 class="fw-bold">Rooms</h5>
-        <h2 class="fw-bold">0</h2>
-        <i class="bi bi-building background-icon"></i>
+    <div class="col-lg-3 col-md-6">
+      <div class="stat-card sc-violet">
+        <div class="stat-icon"><i class="bi bi-person-hearts"></i></div>
+        <div class="stat-label">Total Patients</div>
+        <div class="stat-value">{{ total_patients }}</div>
+        <i class="bi bi-person-hearts stat-bg-icon"></i>
       </div>
     </div>
   </div>
 
-  <!-- Main Dashboard Sections -->
-  <div class="row g-4">
+  <!-- Main Sections -->
+  <div class="row g-3">
 
     <!-- Upcoming Appointments -->
-    <div class="col-lg-8 col-md-12">
-      <div class="card shadow-sm fixed-card">
-        <div class="card-header d-flex justify-content-between align-items-center bg-danger text-white">
-          <h5 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Upcoming Appointments</h5>
-          <a href="{{ url_for('admin_appointments') }}" class="btn btn-sm btn-light text-danger">Show All</a>
+    <div class="col-lg-8">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <div class="panel-icon pi-blue"><i class="bi bi-calendar-check"></i></div>
+            Upcoming Appointments
+          </div>
+          <a href="{{ url_for('admin_appointments') }}" class="view-btn">View All &rarr;</a>
         </div>
-        <div class="card-body text-center py-5">
-          <i class="bi bi-calendar-x display-1 text-muted mb-3"></i>
-          <p class="text-muted mb-3">No upcoming appointments</p>
-          <button class="btn btn-gradient-blue">Book Your First Appointment</button>
+        {% if upcoming_appointments %}
+        <div class="table-responsive">
+          <table class="pro-table">
+            <thead>
+              <tr>
+                <th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Priority</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for a in upcoming_appointments %}
+              <tr>
+                <td>
+                  <div class="cell-name">{{ a.patient_name }}</div>
+                  <div class="cell-sub">{{ a.patient_gender }}, {{ a.patient_age }} yrs</div>
+                </td>
+                <td>
+                  <div class="cell-name" style="font-weight:500;">{{ a.doctor_name }}</div>
+                  <div class="cell-sub">{{ a.doctor_specialization }}</div>
+                </td>
+                <td class="cell-date">{{ a.appointment_date.strftime('%d %b %Y') if a.appointment_date else '—' }}</td>
+                <td><span class="cell-time">{{ a.time_slot }}</span></td>
+                <td>
+                  {% set p = a.priority | lower %}
+                  <span class="prio prio-{{ p }}"><span class="prio-dot"></span>{{ a.priority | capitalize }}</span>
+                </td>
+                <td><span class="st st-{{ a.status | lower }}">{{ a.status }}</span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="empty-state"><i class="bi bi-calendar-x"></i><p>No upcoming appointments</p></div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Doctors Today -->
+    <div class="col-lg-4">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <div class="panel-icon pi-green"><i class="bi bi-person-badge"></i></div>
+            Doctors Today
+          </div>
+          <a href="{{ url_for('admin_doctors') }}" class="view-btn">View All &rarr;</a>
+        </div>
+        <div class="p-3">
+          {% if available_doctors %}
+            {% for doc in available_doctors %}
+            <div class="doc-card">
+              <div class="doc-top">
+                <div>
+                  <div class="doc-name">{{ doc.name }}</div>
+                  <div class="doc-spec">{{ doc.specialization }}</div>
+                </div>
+                <span class="doc-appt">{{ doc.todays_appts }} appt{{ 's' if doc.todays_appts != 1 else '' }}</span>
+              </div>
+              <div class="doc-time"><i class="bi bi-clock"></i> {{ doc.start_time }} – {{ doc.end_time }}</div>
+            </div>
+            {% endfor %}
+          {% else %}
+          <div class="empty-state"><i class="bi bi-person-dash"></i><p>No doctors scheduled for {{ day_name }}</p></div>
+          {% endif %}
         </div>
       </div>
     </div>
 
-    <!-- Available Doctors -->
-    <div class="col-lg-4 col-md-12">
-      <div class="card shadow-sm fixed-card">
-        <div class="card-header d-flex justify-content-between align-items-center bg-success text-white">
-          <h5 class="mb-0"><i class="bi bi-person-badge me-2"></i>Available Doctors</h5>
-          <a href="{{ url_for('admin_doctors') }}" class="btn btn-sm btn-light text-success">Show All</a>
-        </div>
-        <div class="card-body text-center py-5">
-          <i class="bi bi-person-dash display-1 text-muted mb-3"></i>
-          <p class="text-muted mb-3">No doctors available</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Patients & Payments -->
-    <div class="col-lg-6 col-md-12">
-      <div class="card shadow-sm fixed-card">
-        <div class="card-header d-flex justify-content-between align-items-center bg-warning text-white">
-          <h5 class="mb-0"><i class="bi bi-people me-2"></i>Patients Today</h5>
-          <div>
-            <a href="{{ url_for('admin_patients') }}" class="btn btn-sm btn-light text-warning me-2">Show All</a>
-            <a href="{{ url_for('admin_payments') }}" class="btn btn-sm btn-light text-warning">Show Payments</a>
+    <!-- Today's Patients -->
+    <div class="col-12">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <div class="panel-icon pi-amber"><i class="bi bi-people"></i></div>
+            Today's Patients
+          </div>
+          <div class="d-flex gap-2">
+            <a href="{{ url_for('admin_patients') }}"     class="view-btn">All Patients</a>
+            <a href="{{ url_for('admin_appointments') }}" class="view-btn">All Appointments</a>
           </div>
         </div>
-        <div class="card-body text-center py-5">
-          <i class="bi bi-person-x display-1 text-muted mb-3"></i>
-          <p class="text-muted mb-3">No patients today</p>
-          <button class="btn btn-gradient-blue">Add Patient</button>
+        {% if todays_patients %}
+        <div class="table-responsive">
+          <table class="pro-table">
+            <thead>
+              <tr><th>Patient</th><th>Doctor</th><th>Time</th><th>Priority</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              {% for p in todays_patients %}
+              <tr>
+                <td>
+                  <div class="cell-name">{{ p.patient_name }}</div>
+                  <div class="cell-sub">{{ p.patient_gender }}, {{ p.patient_age }} yrs</div>
+                </td>
+                <td><div class="cell-name" style="font-weight:500;">{{ p.doctor_name }}</div></td>
+                <td><span class="cell-time">{{ p.time_slot }}</span></td>
+                <td>
+                  {% set pr = p.priority | lower %}
+                  <span class="prio prio-{{ pr }}"><span class="prio-dot"></span>{{ p.priority | capitalize }}</span>
+                </td>
+                <td><span class="st st-{{ p.status | lower }}">{{ p.status }}</span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
+        {% else %}
+        <div class="empty-state"><i class="bi bi-person-x"></i><p>No patients scheduled for today</p></div>
+        {% endif %}
       </div>
     </div>
-
-<!-- Rooms Section -->
-<div class="col-lg-6 col-md-12">
-  <div class="card shadow-sm fixed-card">
-
-    <!-- Header -->
-    <div class="card-header bg-primary text-white d-flex align-items-center justify-content-between">
-      <h5 class="mb-0"><i class="bi bi-building me-2"></i>Rooms</h5>
-      <a href="{{ url_for('admin_rooms') }}" class="btn btn-sm btn-light text-primary">Edit Availability</a>
-    </div>
-
-    <!-- Wrapper (VERY IMPORTANT → needed for CSS to work!) -->
-    <div class="rooms-container">
-
-      <!-- Radio tabs -->
-      <div class="segmented-container">
-
-        <input type="radio" name="roomtab" id="available" checked>
-        <label for="available" class="seg-btn">Available</label>
-
-        <input type="radio" name="roomtab" id="occupied">
-        <label for="occupied" class="seg-btn">Occupied</label>
-
-      </div>
-
-      <!-- Content -->
-      <div class="rooms-wrapper">
-
-        <div class="room-pane available-pane text-muted">
-          <i class="bi bi-door-open display-1 mt-4 mb-3"></i>
-          <p class="mb-0">No available rooms right now</p>
-        </div>
-
-        <div class="room-pane occupied-pane text-muted">
-          <i class="bi bi-person-fill-lock display-1 mt-4 mb-3"></i>
-          <p class="mb-0">No occupied rooms found</p>
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-</div>
 
   </div>
 </main>
 
-<footer class="text-center py-3">
-  © 2025 ClinicMS | All Rights Reserved
-</footer>
-
-<script>
-function showRooms(type) {
-  const container = document.getElementById('rooms-content');
-  if(type === 'available'){
-    container.innerHTML = '<ul class="list-group"><li class="list-group-item">Room 101</li><li class="list-group-item">Room 102</li></ul>';
-  } else {
-    container.innerHTML = '<ul class="list-group"><li class="list-group-item">Room 201</li><li class="list-group-item">Room 202</li></ul>';
-  }
-}
-</script>
+<footer>© 2025 ClinicMS &mdash; All Rights Reserved</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -409,8 +409,24 @@
 
       fetch('/get_doctor_times/' + DOCTOR_ID + '/' + date)
         .then(function(r) { return r.json(); })
-        .then(function(slots) {
-          if (!slots || slots.length === 0) {
+        .then(function(data) {
+
+          // ── Doctor not working on this day ──
+          if (!data.working) {
+            slotsDiv.innerHTML =
+              '<div class="slots-empty">' +
+              '<i class="fas fa-calendar-times" style="margin-right:6px;color:#f59e0b;"></i>' +
+              (data.message || 'Doctor is not available on this day.') +
+              ' <a href="/doctor/schedule">Manage your schedule</a> to add slots.' +
+              '</div>';
+            return;
+          }
+
+          var available = data.available || [];
+          var booked    = data.booked    || [];
+
+          // ── No slots at all ──
+          if (available.length === 0 && booked.length === 0) {
             slotsDiv.innerHTML =
               '<div class="slots-empty">' +
               'No slots available for this date. ' +
@@ -418,11 +434,32 @@
               '</div>';
             return;
           }
+
+          // ── Render slot grid ──
           var html = '<div class="slot-grid">';
-          slots.forEach(function(slot) {
-            html += '<button type="button" class="slot-btn" onclick="selectSlot(this,\'' + slot + '\')">' + slot + '</button>';
+
+          // Available slots — clickable
+          available.forEach(function(slot) {
+            html += '<button type="button" class="slot-btn" ' +
+                    'onclick="selectSlot(this,\'' + slot + '\')">' +
+                    slot + '</button>';
           });
+
+          // Booked slots — disabled / greyed out
+          booked.forEach(function(slot) {
+            html += '<button type="button" class="slot-btn" ' +
+                    'style="opacity:0.4;cursor:not-allowed;text-decoration:line-through;" ' +
+                    'disabled title="Already booked">' +
+                    slot + '</button>';
+          });
+
           html += '</div>';
+
+          // Slot count label
+          html = '<p style="font-size:0.8rem;color:var(--muted);margin-bottom:8px;">' +
+                 available.length + ' of ' + (available.length + booked.length) +
+                 ' slots available</p>' + html;
+
           slotsDiv.innerHTML = html;
         })
         .catch(function() {

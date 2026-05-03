@@ -3,379 +3,151 @@
 <head>
 <meta charset="UTF-8">
 <title>Appointments | ClinicMS</title>
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-style.css') }}">
-
 <style>
-html, body { height: 100%; }
-body { display: flex; flex-direction: column; }
-main { flex: 1; }
+html,body{height:100%}body{display:flex;flex-direction:column}main{flex:1}.patient-card{background:#f8f9fa;border-radius:8px}.add-appointment-form{display:none;margin-bottom:20px;padding:20px;border:1px solid #ddd;border-radius:8px;background:#fff}.name-display-box{background:#e9ecef;border:1px solid #ced4da;border-radius:6px;padding:8px 12px;font-weight:600;color:#212529}.filter-card{background:#fff;border:1px solid #dee2e6;border-radius:10px;padding:16px 20px;margin-bottom:20px}.filter-title{font-weight:700;color:#343a40;margin-bottom:12px;font-size:.92rem;display:flex;align-items:center;gap:6px}.filter-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}.filter-group{display:flex;flex-direction:column;flex:1;min-width:155px}.filter-group label{font-size:.8rem;font-weight:600;color:#6c757d;margin-bottom:4px}.filter-group select,.filter-group input{border:1.5px solid #dee2e6;border-radius:7px;padding:7px 10px;font-size:.88rem;color:#212529;background:#fff}.filter-group select:focus,.filter-group input:focus{border-color:#0d6efd;outline:none}.btn-filter{background:#0d6efd;color:#fff;border:none;border-radius:7px;padding:8px 18px;font-weight:600;font-size:.88rem;cursor:pointer}.btn-filter:hover{background:#0b5ed7}.btn-clear{background:#6c757d;color:#fff;border:none;border-radius:7px;padding:8px 14px;font-weight:600;font-size:.88rem;cursor:pointer;text-decoration:none;display:inline-block}.btn-clear:hover{background:#5a6268;color:#fff}.filter-active-badge{background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:3px 10px;font-size:.78rem;font-weight:600;color:#856404}.results-summary{font-size:.88rem;color:#6c757d;margin-bottom:10px;font-weight:600}.not-available-msg{display:none;background:#fff7ed;border-left:4px solid #f59e0b;border-radius:8px;padding:10px 14px;margin-top:8px;color:#92400e;font-weight:600;font-size:.88rem}.slot-loading{display:none;text-align:center;padding:14px;color:#6c757d;font-size:.9rem}.slot-loading.active{display:block}.slot-picker-wrapper{display:none;margin-top:8px}.slot-picker-wrapper.active{display:block}.slot-picker-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:.85rem;color:#495057;font-weight:600}.slot-legend{display:flex;gap:10px;font-size:.78rem;font-weight:600}.legend-dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:3px}.slot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}.slot-btn{padding:8px 4px;border-radius:8px;text-align:center;font-size:.78rem;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .18s ease;user-select:none}.slot-btn.available{background:#d1fae5;color:#065f46;border-color:#6ee7b7}.slot-btn.available:hover{background:#059669;color:#fff;border-color:#059669;transform:translateY(-1px)}.slot-btn.booked{background:#f1f5f9;color:#94a3b8;border-color:#e2e8f0;cursor:not-allowed;text-decoration:line-through}.slot-btn.selected{background:#2563eb;color:#fff;border-color:#1d4ed8;transform:scale(1.04);box-shadow:0 3px 10px rgba(37,99,235,.35)}.selected-slot-display{display:none;background:#eff6ff;border:2px solid #2563eb;border-radius:8px;padding:8px 14px;margin-top:6px;color:#1d4ed8;font-weight:700;font-size:.88rem}.badge-emergency{background:#dc2626;color:#fff}.badge-urgent{background:#ea580c;color:#fff}.badge-normal{background:#2563eb;color:#fff}
 
-.patient-card {
-    background: #f8f9fa;
-    border-radius: 8px;
-}
-
-.add-appointment-form {
-    display: none;
-    margin-bottom: 20px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #fff;
-}
-
-.name-display-box {
-    background: #e9ecef;
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    padding: 8px 12px;
-    font-weight: 600;
-    color: #212529;
-}
+.gradient-blue { background: linear-gradient(135deg, #527fbe 0%, #114dce 100%) !important; }
+.navbar-brand{font-weight:700;font-size:1.1rem}
+.nav-link{font-size:.875rem;font-weight:500;padding:7px 11px!important;border-radius:6px;transition:background .15s}
+.nav-link:hover,.nav-link.active{background:rgba(255,255,255,.12)!important}
+.dropdown-menu{border:1px solid #e2e8f0;box-shadow:0 4px 16px rgba(15,28,46,.10);border-radius:8px;padding:4px}
+.dropdown-item{border-radius:6px;font-size:.85rem;padding:7px 12px}
 </style>
-
 </head>
 <body>
-
 <nav class="navbar navbar-expand-lg navbar-dark gradient-blue py-3 shadow-sm">
-<div class="container-fluid">
-
-    <a class="navbar-brand d-flex align-items-center">
-        <i class="bi bi-heart-pulse-fill me-2"></i> ClinicMS Admin
-    </a>
-
-    <div class="collapse navbar-collapse justify-content-end">
-        <ul class="navbar-nav align-items-center">
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
-                    <i class="bi bi-speedometer2"></i> Dashboard
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('admin_patients') }}">
-                    <i class="bi bi-person-hearts"></i> Patients
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('admin_doctors') }}">
-                    <i class="bi bi-person-badge"></i> Doctors
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link active" href="{{ url_for('admin_appointments') }}">
-                    <i class="bi bi-calendar-check"></i> Appointments
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('admin_payments') }}">
-                    <i class="bi bi-cash-stack"></i> Payments
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('admin_rooms') }}">
-                    <i class="bi bi-building me-1"></i> Rooms
-                </a>
-            </li>
-
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle"></i> {{ session['admin'] }}
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#">Edit Profile</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
-                </ul>
-            </li>
-
-        </ul>
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" href="#"><i class="bi bi-heart-pulse-fill me-2"></i> ClinicMS Admin</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_patients') }}"><i class="bi bi-person-hearts me-1"></i> Patients</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_doctors') }}"><i class="bi bi-person-badge me-1"></i> Doctors</a></li>
+        <li class="nav-item"><a class="nav-link active" href="{{ url_for('admin_appointments') }}"><i class="bi bi-calendar-check me-1"></i> Appointments</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><i class="bi bi-person-circle me-1"></i> {{ session['admin_name'] }}</a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#">Edit Profile</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
     </div>
-</div>
+  </div>
 </nav>
-
 <main class="container mt-4">
-
-    <div class="page-header">
-        <h1>Manage Appointments</h1>
-        <p>View and manage appointments and schedules.</p>
-    </div>
-
-    <button class="btn btn-success mb-3" id="openFormBtn">+ Add Appointment</button>
-
-    <div class="add-appointment-form" id="addAppointmentForm">
-
-        <h4 id="formTitle">Add Appointment</h4>
-
-        <form id="appointmentForm" method="POST" action="{{ url_for('add_appointment') }}">
-
-            <!-- ── PATIENT ───────────────────────────────────────────────────
-                 ADD MODE:  <select name="patient_id"> submits the value.
-                 EDIT MODE: select is disabled (won't submit), hidden input submits instead.
-            ─────────────────────────────────────────────────────────────── -->
-            <label class="mt-2">Patient</label>
-
-            <select name="patient_id" id="patientSelect" class="form-control" required>
-                <option value="">-- Select Patient --</option>
-                {% for p in patients %}
-                <option value="{{ p.id }}">{{ p.id }} - {{ p.name }}</option>
-                {% endfor %}
-            </select>
-
-            <div id="patientNameDisplay" class="name-display-box mt-1" style="display:none;">
-                <i class="bi bi-person-fill me-2 text-primary"></i>
-                <span id="patientNameText"></span>
-            </div>
-
-            <!-- name="patient_id_hidden" — Flask edit route reads this in edit mode -->
-            <input type="hidden" id="patientIdHidden" name="patient_id_hidden" value="">
-
-            <div id="patient_info" class="mt-2 text-primary small"></div>
-
-            <hr>
-
-            <!-- ── DOCTOR ────────────────────────────────────────────────── -->
-            <label class="mt-2">Doctor</label>
-
-            <select name="doctor_id" id="doctorSelect" class="form-control" required>
-                <option value="">-- Select Doctor --</option>
-                {% for d in doctors %}
-                <option value="{{ d.id }}">{{ d.id }} - {{ d.name }} ({{ d.specialization }})</option>
-                {% endfor %}
-            </select>
-
-            <div id="doctorNameDisplay" class="name-display-box mt-1" style="display:none;">
-                <i class="bi bi-person-badge-fill me-2 text-success"></i>
-                <span id="doctorNameText"></span>
-            </div>
-
-            <!-- name="doctor_id_hidden" — Flask edit route reads this in edit mode -->
-            <input type="hidden" id="doctorIdHidden" name="doctor_id_hidden" value="">
-
-            <div id="doctor_info" class="mt-2 text-success small"></div>
-
-            <hr>
-
-            <!-- ── OTHER FIELDS ──────────────────────────────────────────── -->
-            <label class="mt-2">Appointment Date</label>
-            <input type="date" name="appointment_date" id="appointment_date" class="form-control" required>
-
-            <label class="mt-2">Priority</label>
-            <select name="priority" id="priority" class="form-control" required>
-                <option value="normal">Normal</option>
-                <option value="urgent">Urgent</option>
-                <option value="emergency">Emergency</option>
-            </select>
-
-            <label class="mt-2">Time Slot</label>
-            <select name="time_slot" id="timeSlotSelect" class="form-control" required>
-                <option value="">-- Select Time Slot --</option>
-                {% for slot in time_slots %}
-                <option value="{{ slot }}">{{ slot }}</option>
-                {% endfor %}
-            </select>
-
-            <label class="mt-2">Reason</label>
-            <textarea name="reason" id="reason" class="form-control" required></textarea>
-
-            <div class="mt-3">
-                <button type="submit" id="submitBtn" class="btn btn-primary">Add Appointment</button>
-                <button type="button" class="btn btn-secondary ms-2" id="closeFormBtn">Close</button>
-            </div>
-
-        </form>
-    </div>
-
-    <!-- ── APPOINTMENTS LIST ─────────────────────────────────────────────── -->
-    <h2 class="mt-4">Appointments</h2>
-
-    <div class="patient-cards">
-
-        {% for a in appointments %}
-
-        <div class="patient-card border p-3 mb-3">
-
-            <h5>{{ a.patient_name }} → {{ a.doctor_name }}</h5>
-            <p><strong>Patient:</strong> {{ a.patient_name }}</p>
-            <p><strong>Doctor:</strong> {{ a.doctor_name }} | Specialization: {{ a.doctor_specialization }}</p>
-            <p>Date: {{ a.appointment_date }} | Time: {{ a.time_slot }}</p>
-            <p><strong>Reason:</strong> {{ a.reason }}</p>
-
-            <form method="POST" action="{{ url_for('update_appointment_status') }}">
-                <input type="hidden" name="appointment_id" value="{{ a.id }}">
-                <label>Status:</label>
-                <select name="status" onchange="this.form.submit()">
-                    <option value="Scheduled" {% if a.status=='Scheduled' %}selected{% endif %}>Scheduled</option>
-                    <option value="Completed" {% if a.status=='Completed' %}selected{% endif %}>Completed</option>
-                    <option value="Cancelled"  {% if a.status=='Cancelled'  %}selected{% endif %}>Cancelled</option>
-                </select>
-            </form>
-
-            {% if a.status != 'Completed' %}
-            <a href="{{ url_for('complete_appointment_admin', appointment_id=a.id) }}">
-                <button class="btn btn-success btn-sm mt-2">Complete</button>
-            </a>
-            {% endif %}
-
-            <!--
-                Store every value in data-* attributes.
-                Jinja2 auto-escapes HTML attribute values — no | e needed,
-                no inline JS — completely safe against special characters.
-            -->
-            <button class="btn btn-warning btn-sm mt-2 edit-btn"
-                data-id="{{ a.id }}"
-                data-patient-id="{{ a.patient_id }}"
-                data-doctor-id="{{ a.doctor_id }}"
-                data-date="{{ a.appointment_date }}"
-                data-time="{{ a.time_slot }}"
-                data-priority="{{ a.priority }}"
-                data-reason="{{ a.reason }}"
-                data-patient-name="{{ a.patient_name }}"
-                data-doctor-name="{{ a.doctor_name }}">
-                <i class="bi bi-pencil-square"></i> Edit
-            </button>
-
-            <a href="{{ url_for('delete_appointment', appointment_id=a.id) }}"
-               onclick="return confirm('Delete this appointment?')">
-                <i class="bi bi-trash delete-icon"></i>
-            </a>
-
-        </div>
-
-        {% else %}
-        <p class="text-muted">No appointments found.</p>
-        {% endfor %}
-
-    </div>
-
+<div class="page-header"><h1>Manage Appointments</h1><p>View, filter and manage all appointments.</p></div>
+<div class="filter-card">
+<div class="filter-title"><i class="bi bi-funnel-fill text-primary"></i> Filter Appointments
+{% if filter_patient_id or filter_doctor_id or filter_date or filter_status %}<span class="filter-active-badge ms-2"><i class="bi bi-check-circle-fill"></i> Filters Active</span>{% endif %}</div>
+<form method="GET" action="{{ url_for('admin_appointments') }}">
+<div class="filter-row">
+<div class="filter-group"><label><i class="bi bi-person-fill"></i> Patient</label>
+<select name="patient_id"><option value="">All Patients</option>
+{% for p in patients %}<option value="{{ p.id }}" {% if filter_patient_id == p.id|string %}selected{% endif %}>{{ p.id }} — {{ p.name }}</option>{% endfor %}</select></div>
+<div class="filter-group"><label><i class="bi bi-person-badge-fill"></i> Doctor</label>
+<select name="doctor_id"><option value="">All Doctors</option>
+{% for d in doctors %}<option value="{{ d.id }}" {% if filter_doctor_id == d.id|string %}selected{% endif %}>{{ d.id }} — {{ d.name }} ({{ d.specialization }})</option>{% endfor %}</select></div>
+<div class="filter-group"><label><i class="bi bi-calendar-date"></i> Date</label><input type="date" name="date" value="{{ filter_date }}"></div>
+<div class="filter-group"><label><i class="bi bi-activity"></i> Status</label>
+<select name="status"><option value="">All Statuses</option>
+<option value="Scheduled" {% if filter_status=='Scheduled' %}selected{% endif %}>Scheduled</option>
+<option value="Completed" {% if filter_status=='Completed' %}selected{% endif %}>Completed</option>
+<option value="Cancelled" {% if filter_status=='Cancelled' %}selected{% endif %}>Cancelled</option>
+<option value="Pending" {% if filter_status=='Pending' %}selected{% endif %}>Pending</option></select></div>
+<div class="filter-group" style="min-width:auto;flex:0;"><label style="visibility:hidden">Go</label>
+<div style="display:flex;gap:6px;">
+<button type="submit" class="btn-filter"><i class="bi bi-search"></i> Search</button>
+<a href="{{ url_for('admin_appointments') }}" class="btn-clear"><i class="bi bi-x-lg"></i> Clear</a>
+</div></div></div></form></div>
+<div class="results-summary"><i class="bi bi-list-ul"></i> Showing <strong>{{ total_count }}</strong> appointment{{ 's' if total_count != 1 else '' }}{% if filter_patient_id or filter_doctor_id or filter_date or filter_status %} (filtered){% endif %}</div>
+<button class="btn btn-success mb-3" id="openFormBtn">+ Add Appointment</button>
+<div class="add-appointment-form" id="addAppointmentForm">
+<h4 id="formTitle">Add Appointment</h4>
+<form id="appointmentForm" method="POST" action="{{ url_for('add_appointment') }}">
+<label class="mt-2">Patient</label>
+<select name="patient_id" id="patientSelect" class="form-control" required><option value="">-- Select Patient --</option>{% for p in patients %}<option value="{{ p.id }}">{{ p.id }} — {{ p.name }}</option>{% endfor %}</select>
+<div id="patientNameDisplay" class="name-display-box mt-1" style="display:none;"><i class="bi bi-person-fill me-2 text-primary"></i><span id="patientNameText"></span></div>
+<input type="hidden" id="patientIdHidden" name="patient_id_hidden" value=""><div id="patient_info" class="mt-2 text-primary small"></div><hr>
+<label class="mt-2">Doctor</label>
+<select name="doctor_id" id="doctorSelect" class="form-control" required><option value="">-- Select Doctor --</option>{% for d in doctors %}<option value="{{ d.id }}">{{ d.id }} — {{ d.name }} ({{ d.specialization }})</option>{% endfor %}</select>
+<div id="doctorNameDisplay" class="name-display-box mt-1" style="display:none;"><i class="bi bi-person-badge-fill me-2 text-success"></i><span id="doctorNameText"></span></div>
+<input type="hidden" id="doctorIdHidden" name="doctor_id_hidden" value=""><div id="doctor_info" class="mt-2 text-success small"></div><hr>
+<label class="mt-2">Appointment Date</label>
+<input type="date" name="appointment_date" id="appointment_date" class="form-control" required onchange="loadAdminSlots()">
+<label class="mt-2">Priority</label>
+<select name="priority" id="priority" class="form-control" required><option value="normal">Normal</option><option value="urgent">Urgent</option><option value="emergency">Emergency</option></select>
+<label class="mt-2">Time Slot</label>
+<div class="not-available-msg" id="not-available-msg"><i class="bi bi-exclamation-triangle-fill me-1"></i><span id="not-available-text">Doctor is not available on this day.</span></div>
+<div class="slot-loading" id="slot-loading"><i class="bi bi-arrow-repeat"></i> Loading available slots...</div>
+<div class="slot-picker-wrapper" id="slot-picker-wrapper">
+<div class="slot-picker-header"><span id="slot-count-label">Select a slot</span>
+<div class="slot-legend"><span><span class="legend-dot" style="background:#059669"></span>Available</span><span><span class="legend-dot" style="background:#94a3b8"></span>Booked</span><span><span class="legend-dot" style="background:#2563eb"></span>Selected</span></div></div>
+<div class="slot-grid" id="slot-grid"></div></div>
+<div class="selected-slot-display" id="selected-slot-display"><i class="bi bi-check-circle-fill me-1"></i>Selected: <span id="selected-slot-text"></span></div>
+<input type="hidden" name="time_slot" id="time_slot_input">
+<div id="slot-prompt" class="text-muted small mt-1"><i class="bi bi-info-circle"></i> Select a doctor and date to see available slots.</div>
+<label class="mt-2">Reason</label>
+<textarea name="reason" id="reason" class="form-control" required></textarea>
+<div class="mt-3"><button type="submit" id="submitBtn" class="btn btn-primary">Add Appointment</button><button type="button" class="btn btn-secondary ms-2" id="closeFormBtn">Close</button></div>
+</form></div>
+<h2 class="mt-4">Appointments</h2>
+<div class="patient-cards">
+{% for a in appointments %}
+<div class="patient-card border p-3 mb-3">
+<div class="d-flex justify-content-between align-items-start mb-2">
+<h5 class="mb-0"><span class="badge bg-secondary me-1">#{{ a.appointment_id }}</span>{{ a.patient_name }} → {{ a.doctor_name }}</h5>
+<span class="badge rounded-pill {% if a.priority=='emergency' %}badge-emergency{% elif a.priority=='urgent' %}badge-urgent{% else %}badge-normal{% endif %}">{{ a.priority|capitalize }}</span></div>
+<p><strong>Patient:</strong> {{ a.patient_name }} (ID: {{ a.patient_id }})</p>
+<p><strong>Doctor:</strong> {{ a.doctor_name }} | {{ a.doctor_specialization }}</p>
+<p><strong>Date:</strong> {{ a.appointment_date }} &nbsp;|&nbsp;<strong>Time:</strong> {{ a.time_slot }}</p>
+<p><strong>Reason:</strong> {{ a.reason }}</p>
+<form method="POST" action="{{ url_for('update_appointment_status') }}" class="d-inline">
+<input type="hidden" name="appointment_id" value="{{ a.appointment_id }}">
+<label class="me-1"><strong>Status:</strong></label>
+<select name="status" onchange="this.form.submit()" class="form-select form-select-sm d-inline w-auto">
+<option value="Scheduled" {% if a.status=='Scheduled' %}selected{% endif %}>Scheduled</option>
+<option value="Completed" {% if a.status=='Completed' %}selected{% endif %}>Completed</option>
+<option value="Cancelled" {% if a.status=='Cancelled' %}selected{% endif %}>Cancelled</option>
+</select></form>
+{% if a.status != 'Completed' %}<a href="{{ url_for('complete_appointment_admin', appointment_id=a.appointment_id) }}" class="ms-2"><button class="btn btn-success btn-sm mt-2">Complete</button></a>{% endif %}
+<button class="btn btn-warning btn-sm mt-2 edit-btn"
+data-id="{{ a.appointment_id }}" data-patient-id="{{ a.patient_id }}" data-doctor-id="{{ a.doctor_id }}"
+data-date="{{ a.appointment_date }}" data-time="{{ a.time_slot }}" data-priority="{{ a.priority }}"
+data-reason="{{ a.reason }}" data-patient-name="{{ a.patient_name }}" data-doctor-name="{{ a.doctor_name }}">
+<i class="bi bi-pencil-square"></i> Edit</button>
+<a href="{{ url_for('delete_appointment', appointment_id=a.appointment_id) }}" onclick="return confirm('Delete this appointment?')" class="ms-1">
+<button class="btn btn-danger btn-sm mt-2"><i class="bi bi-trash"></i> Delete</button></a>
+</div>
+{% else %}
+<div class="alert alert-info"><i class="bi bi-info-circle me-2"></i>No appointments found{% if filter_patient_id or filter_doctor_id or filter_date or filter_status %} matching your filters. <a href="{{ url_for('admin_appointments') }}" class="alert-link">Clear filters</a>{% else %} yet.{% endif %}</div>
+{% endfor %}
+</div>
 </main>
-
 <footer class="mt-auto text-center p-3">© 2025 ClinicMS</footer>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-
-const openBtn         = document.getElementById("openFormBtn");
-const closeBtn        = document.getElementById("closeFormBtn");
-const formBox         = document.getElementById("addAppointmentForm");
-const appointmentForm = document.getElementById("appointmentForm");
-const patientSelect   = document.getElementById("patientSelect");
-const doctorSelect    = document.getElementById("doctorSelect");
-
-// ── Info panel fetchers ────────────────────────────────────────
-function fetchPatientInfo(pid) {
-    if (!pid) { document.getElementById("patient_info").innerHTML = ""; return; }
-    fetch("/get_patient/" + pid)
-        .then(r => r.json())
-        .then(d => {
-            document.getElementById("patient_info").innerHTML =
-                "Name: " + d.name + " | Age: " + d.age + " | Gender: " + d.gender;
-        });
-}
-
-function fetchDoctorInfo(did) {
-    if (!did) { document.getElementById("doctor_info").innerHTML = ""; return; }
-    fetch("/get_doctor/" + did)
-        .then(r => r.json())
-        .then(d => {
-            document.getElementById("doctor_info").innerHTML =
-                "Name: " + d.name + " | Specialization: " + d.specialization;
-        });
-}
-
-patientSelect.addEventListener("change", function () { fetchPatientInfo(this.value); });
-doctorSelect.addEventListener("change",  function () { fetchDoctorInfo(this.value);  });
-
-// ── Add button ─────────────────────────────────────────────────
-openBtn.onclick = () => {
-    resetForm();
-    formBox.style.display = "block";
-    openBtn.style.display = "none";
-};
-
-// ── Close button ───────────────────────────────────────────────
-closeBtn.onclick = () => {
-    formBox.style.display = "none";
-    openBtn.style.display = "inline-block";
-    resetForm();
-};
-
-// ── Edit button (event delegation reads data-* safely) ─────────
-document.addEventListener("click", function (e) {
-    const btn = e.target.closest(".edit-btn");
-    if (!btn) return;
-    openEditMode(btn.dataset);
-});
-
-function openEditMode(d) {
-    formBox.style.display = "block";
-    openBtn.style.display = "none";
-
-    document.getElementById("formTitle").innerText = "Edit Appointment";
-    appointmentForm.action = "/admin/appointments/edit/" + d.id;
-
-    // PATIENT — disable select, show name text, store id in hidden input
-    patientSelect.disabled      = true;
-    patientSelect.style.display = "none";
-    document.getElementById("patientNameText").innerText        = d.patientName;
-    document.getElementById("patientNameDisplay").style.display = "block";
-    document.getElementById("patientIdHidden").value            = d.patientId;
-
-    // DOCTOR — same
-    doctorSelect.disabled      = true;
-    doctorSelect.style.display = "none";
-    document.getElementById("doctorNameText").innerText        = d.doctorName;
-    document.getElementById("doctorNameDisplay").style.display = "block";
-    document.getElementById("doctorIdHidden").value            = d.doctorId;
-
-    // Info panels
-    fetchPatientInfo(d.patientId);
-    fetchDoctorInfo(d.doctorId);
-
-    // Other fields
-    document.getElementById("appointment_date").value = d.date;
-    document.getElementById("timeSlotSelect").value   = d.time;
-    document.getElementById("priority").value         = d.priority;
-    document.getElementById("reason").value           = d.reason;
-
-    document.getElementById("submitBtn").innerText = "Update Appointment";
-    document.getElementById("submitBtn").className = "btn btn-warning";
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-// ── Reset to add mode ──────────────────────────────────────────
-function resetForm() {
-    document.getElementById("formTitle").innerText = "Add Appointment";
-    appointmentForm.action                         = "{{ url_for('add_appointment') }}";
-    document.getElementById("submitBtn").innerText = "Add Appointment";
-    document.getElementById("submitBtn").className = "btn btn-primary";
-
-    appointmentForm.reset();
-    document.getElementById("patient_info").innerHTML = "";
-    document.getElementById("doctor_info").innerHTML  = "";
-
-    patientSelect.disabled      = false;
-    patientSelect.style.display = "block";
-    document.getElementById("patientNameDisplay").style.display = "none";
-    document.getElementById("patientNameText").innerText        = "";
-    document.getElementById("patientIdHidden").value            = "";
-
-    doctorSelect.disabled      = false;
-    doctorSelect.style.display = "block";
-    document.getElementById("doctorNameDisplay").style.display = "none";
-    document.getElementById("doctorNameText").innerText        = "";
-    document.getElementById("doctorIdHidden").value            = "";
-}
-
+const openBtn=document.getElementById("openFormBtn"),closeBtn=document.getElementById("closeFormBtn"),formBox=document.getElementById("addAppointmentForm"),appointmentForm=document.getElementById("appointmentForm"),patientSelect=document.getElementById("patientSelect"),doctorSelect=document.getElementById("doctorSelect");
+function fetchPatientInfo(pid){if(!pid){document.getElementById("patient_info").innerHTML="";return;}fetch("/get_patient/"+pid).then(r=>r.json()).then(d=>{document.getElementById("patient_info").innerHTML="Name: "+d.name+" | Age: "+d.age+" | Gender: "+d.gender;});}
+function fetchDoctorInfo(did){if(!did){document.getElementById("doctor_info").innerHTML="";return;}fetch("/get_doctor/"+did).then(r=>r.json()).then(d=>{document.getElementById("doctor_info").innerHTML="Name: "+d.name+" | Specialization: "+d.specialization;});}
+patientSelect.addEventListener("change",function(){fetchPatientInfo(this.value);});
+doctorSelect.addEventListener("change",function(){fetchDoctorInfo(this.value);loadAdminSlots();});
+function getDoctorId(){const h=document.getElementById("doctorIdHidden").value;return h||doctorSelect.value;}
+function loadAdminSlots(){const doctorId=getDoctorId(),dateVal=document.getElementById("appointment_date").value;document.getElementById("slot-prompt").style.display=(doctorId&&dateVal)?"none":"block";if(!doctorId||!dateVal)return;document.getElementById("slot-loading").classList.add("active");document.getElementById("slot-picker-wrapper").classList.remove("active");document.getElementById("not-available-msg").style.display="none";clearSelectedSlot();fetch("/get_doctor_times/"+doctorId+"/"+dateVal).then(r=>r.json()).then(data=>{document.getElementById("slot-loading").classList.remove("active");if(!data.working){document.getElementById("not-available-text").textContent=data.message||"Doctor is not available on this day.";document.getElementById("not-available-msg").style.display="block";return;}renderSlots(data.available,data.booked);}).catch(err=>{document.getElementById("slot-loading").classList.remove("active");console.error(err);});}
+function renderSlots(available,booked){const grid=document.getElementById("slot-grid"),label=document.getElementById("slot-count-label");grid.innerHTML="";label.textContent=available.length+" of "+(available.length+booked.length)+" slots available";available.forEach(slot=>{const btn=document.createElement("div");btn.className="slot-btn available";btn.textContent=slot;btn.onclick=()=>selectSlot(slot,btn);grid.appendChild(btn);});booked.forEach(slot=>{const btn=document.createElement("div");btn.className="slot-btn booked";btn.textContent=slot+" ✗";btn.title="Already booked";grid.appendChild(btn);});if(available.length===0&&booked.length>0){const msg=document.createElement("div");msg.style.cssText="grid-column:1/-1;text-align:center;padding:14px;color:#6c757d;font-size:.88rem;";msg.innerHTML="<i class='bi bi-calendar-x' style='font-size:1.5rem;display:block;margin-bottom:6px'></i>All slots fully booked. Please choose another date.";grid.appendChild(msg);}document.getElementById("slot-picker-wrapper").classList.add("active");}
+function selectSlot(slot,btn){document.querySelectorAll(".slot-btn.selected").forEach(b=>{b.classList.remove("selected");b.classList.add("available");});btn.classList.remove("available");btn.classList.add("selected");document.getElementById("time_slot_input").value=slot;document.getElementById("selected-slot-text").textContent=slot;document.getElementById("selected-slot-display").style.display="block";}
+function clearSelectedSlot(){document.getElementById("time_slot_input").value="";document.getElementById("selected-slot-display").style.display="none";document.querySelectorAll(".slot-btn.selected").forEach(b=>{b.classList.remove("selected");b.classList.add("available");});}
+function loadAdminSlotsAndSelect(doctorId,dateVal,existingSlot){if(!doctorId||!dateVal)return;document.getElementById("slot-loading").classList.add("active");document.getElementById("slot-picker-wrapper").classList.remove("active");document.getElementById("not-available-msg").style.display="none";document.getElementById("slot-prompt").style.display="none";fetch("/get_doctor_times/"+doctorId+"/"+dateVal).then(r=>r.json()).then(data=>{document.getElementById("slot-loading").classList.remove("active");if(!data.working){document.getElementById("not-available-text").textContent="Note: Doctor schedule may have changed since this appointment was booked.";document.getElementById("not-available-msg").style.display="block";document.getElementById("time_slot_input").value=existingSlot;document.getElementById("selected-slot-text").textContent=existingSlot;document.getElementById("selected-slot-display").style.display="block";return;}renderSlots(data.available,data.booked);if(existingSlot){let found=false;document.querySelectorAll(".slot-btn").forEach(btn=>{if(btn.textContent.replace(" ✗","").trim()===existingSlot){btn.classList.remove("booked");btn.classList.add("available");btn.onclick=()=>selectSlot(existingSlot,btn);selectSlot(existingSlot,btn);found=true;}});if(!found){document.getElementById("time_slot_input").value=existingSlot;document.getElementById("selected-slot-text").textContent=existingSlot;document.getElementById("selected-slot-display").style.display="block";}}}).catch(err=>{document.getElementById("slot-loading").classList.remove("active");console.error(err);});}
+openBtn.onclick=()=>{resetForm();formBox.style.display="block";openBtn.style.display="none";};
+closeBtn.onclick=()=>{formBox.style.display="none";openBtn.style.display="inline-block";resetForm();};
+document.addEventListener("click",function(e){const btn=e.target.closest(".edit-btn");if(!btn)return;openEditMode(btn.dataset);});
+function openEditMode(d){formBox.style.display="block";openBtn.style.display="none";document.getElementById("formTitle").innerText="Edit Appointment";appointmentForm.action="/admin/appointments/edit/"+d.id;patientSelect.disabled=true;patientSelect.style.display="none";document.getElementById("patientNameText").innerText=d.patientName;document.getElementById("patientNameDisplay").style.display="block";document.getElementById("patientIdHidden").value=d.patientId;doctorSelect.disabled=true;doctorSelect.style.display="none";document.getElementById("doctorNameText").innerText=d.doctorName;document.getElementById("doctorNameDisplay").style.display="block";document.getElementById("doctorIdHidden").value=d.doctorId;fetchPatientInfo(d.patientId);fetchDoctorInfo(d.doctorId);document.getElementById("appointment_date").value=d.date;document.getElementById("priority").value=d.priority;document.getElementById("reason").value=d.reason;loadAdminSlotsAndSelect(d.doctorId,d.date,d.time);document.getElementById("submitBtn").innerText="Update Appointment";document.getElementById("submitBtn").className="btn btn-warning";window.scrollTo({top:0,behavior:"smooth"});}
+function resetForm(){document.getElementById("formTitle").innerText="Add Appointment";appointmentForm.action="{{ url_for('add_appointment') }}";document.getElementById("submitBtn").innerText="Add Appointment";document.getElementById("submitBtn").className="btn btn-primary";appointmentForm.reset();document.getElementById("patient_info").innerHTML="";document.getElementById("doctor_info").innerHTML="";patientSelect.disabled=false;patientSelect.style.display="block";document.getElementById("patientNameDisplay").style.display="none";document.getElementById("patientNameText").innerText="";document.getElementById("patientIdHidden").value="";doctorSelect.disabled=false;doctorSelect.style.display="block";document.getElementById("doctorNameDisplay").style.display="none";document.getElementById("doctorNameText").innerText="";document.getElementById("doctorIdHidden").value="";document.getElementById("slot-picker-wrapper").classList.remove("active");document.getElementById("not-available-msg").style.display="none";document.getElementById("slot-prompt").style.display="block";document.getElementById("slot-grid").innerHTML="";clearSelectedSlot();}
+appointmentForm.addEventListener("submit",function(e){const slot=document.getElementById("time_slot_input").value,isEdit=document.getElementById("submitBtn").innerText==="Update Appointment";if(!slot&&!isEdit){e.preventDefault();alert("Please select a time slot before submitting!");}});
 </script>
-
 </body>
 </html>

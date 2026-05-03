@@ -173,12 +173,12 @@
                         >
                       </td>
                       <td>
-                        <strong>Dr. {{ appointment.doctor.name }}</strong><br />
+                        <strong>Dr. {{ appointment.doctor_name }}</strong><br />
                         <small class="text-muted"
-                          >{{ appointment.doctor.qualification }}</small
+                          >{{ appointment.doctor_qualification }}</small
                         >
                       </td>
-                      <td>{{ appointment.doctor.specialization }}</td>
+                      <td>{{ appointment.doctor_specialization }}</td>
                       <td>
                         <span
                           class="badge bg-{{ 'danger' if appointment.priority == 'emergency' else 'warning' if appointment.priority == 'urgent' else 'success' }}"
@@ -207,14 +207,14 @@
                             type="button"
                             class="btn btn-sm btn-outline-primary"
                             data-bs-toggle="modal"
-                            data-bs-target="#appointmentModal{{ appointment.id }}"
+                            data-bs-target="#appointmentModal{{ appointment.appointment_id }}"
                           >
                             <i class="fas fa-eye"></i>
                           </button>
                           {% if appointment.status == 'scheduled' %}
                           <form
                             method="POST"
-                            action="{{ url_for('cancel_appointment', appointment_id=appointment.id) }}"
+                            action="{{ url_for('cancel_appointment', appointment_id=appointment.appointment_id) }}"
                             class="d-inline"
                           >
                             <button
@@ -287,8 +287,8 @@
                           >{{ appointment.time_slot }}</small
                         >
                       </td>
-                      <td>Dr. {{ appointment.doctor.name }}</td>
-                      <td>{{ appointment.doctor.specialization }}</td>
+                      <td>Dr. {{ appointment.doctor_name }}</td>
+                      <td>{{ appointment.doctor_specialization }}</td>
                       <td>
                         <span
                           class="badge bg-{{ 'success' if appointment.status == 'completed' else 'danger' }}"
@@ -301,7 +301,7 @@
                           type="button"
                           class="btn btn-sm btn-outline-primary"
                           data-bs-toggle="modal"
-                          data-bs-target="#pastAppointmentModal{{ appointment.id }}"
+                          data-bs-target="#pastAppointmentModal{{ appointment.appointment_id }}"
                         >
                           <i class="fas fa-eye"></i> View
                         </button>
@@ -330,7 +330,7 @@
     {% for appointment in upcoming_appointments %}
     <div
       class="modal fade"
-      id="appointmentModal{{ appointment.id }}"
+      id="appointmentModal{{ appointment.appointment_id }}"
       tabindex="-1"
     >
       <div class="modal-dialog modal-lg">
@@ -371,21 +371,21 @@
               </div>
               <div class="col-md-6">
                 <h6>Doctor Information</h6>
-                <p><strong>Name:</strong> Dr. {{ appointment.doctor.name }}</p>
+                <p><strong>Name:</strong> Dr. {{ appointment.doctor_name }}</p>
                 <p>
                   <strong>Specialization:</strong> {{
-                  appointment.doctor.specialization }}
+                  appointment.doctor_specialization }}
                 </p>
                 <p>
                   <strong>Qualification:</strong> {{
-                  appointment.doctor.qualification }}
+                  appointment.doctor_qualification }}
                 </p>
                 <p>
                   <strong>Experience:</strong> {{
-                  appointment.doctor.experience_years }} years
+                  appointment.doctor_experience_years }} years
                 </p>
                 <p>
-                  <strong>Contact:</strong> {{ appointment.doctor.contact }}
+                  <strong>Contact:</strong> {{ appointment.doctor_contact }}
                 </p>
               </div>
             </div>
@@ -409,7 +409,7 @@
             {% if appointment.status == 'scheduled' %}
             <form
               method="POST"
-              action="{{ url_for('cancel_appointment', appointment_id=appointment.id) }}"
+              action="{{ url_for('cancel_appointment', appointment_id=appointment.appointment_id) }}"
               class="d-inline"
             >
               <button
@@ -438,7 +438,7 @@
     {% for appointment in past_appointments %}
     <div
       class="modal fade"
-      id="pastAppointmentModal{{ appointment.id }}"
+      id="pastAppointmentModal{{ appointment.appointment_id }}"
       tabindex="-1"
     >
       <div class="modal-dialog modal-lg">
@@ -471,10 +471,10 @@
               </div>
               <div class="col-md-6">
                 <h6>Doctor Information</h6>
-                <p><strong>Name:</strong> Dr. {{ appointment.doctor.name }}</p>
+                <p><strong>Name:</strong> Dr. {{ appointment.doctor_name }}</p>
                 <p>
                   <strong>Specialization:</strong> {{
-                  appointment.doctor.specialization }}
+                  appointment.doctor_specialization }}
                 </p>
               </div>
             </div>
