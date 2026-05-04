@@ -1364,6 +1364,7 @@ def medical_records():
     
     return render_template('patient/medical-records.html', records=records)
 
+
 @app.route('/patient/prescriptions')
 @patient_login_required
 def prescriptions():
