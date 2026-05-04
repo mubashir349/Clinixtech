@@ -286,26 +286,7 @@
         let selectedDoctor = null;
         let selectedTime = null;
 
-        // Time slots available
-        const timeSlots = [
-          "09:00 AM",
-          "09:30 AM",
-          "10:00 AM",
-          "10:30 AM",
-          "11:00 AM",
-          "11:30 AM",
-          "12:00 PM",
-          "12:30 PM",
-          "02:00 PM",
-          "02:30 PM",
-          "03:00 PM",
-          "03:30 PM",
-          "04:00 PM",
-          "04:30 PM",
-          "05:00 PM",
-        ];
-
-        // Load doctors when specialization and date are selected
+        // ── Load doctors when specialization + date selected ───────
         async function loadDoctors() {
           const specialization = specializationSelect.value;
           const date = dateInput.value;
@@ -315,17 +296,20 @@
             return;
           }
 
+          // Reset downstream sections
+          timeSlotsSection.style.display = "none";
+          detailsSection.style.display   = "none";
+          bookButton.disabled = true;
+          selectedDoctor = null;
+          selectedTime   = null;
+
           try {
             const response = await fetch(
               `/api/doctors/available?specialization=${specialization}&date=${date}`
             );
             const doctors = await response.json();
-
             displayDoctors(doctors);
             doctorsSection.style.display = "block";
-            timeSlotsSection.style.display = "none";
-            detailsSection.style.display = "none";
-            bookButton.disabled = true;
           } catch (error) {
             console.error("Error loading doctors:", error);
           }
@@ -343,93 +327,141 @@
 
           doctors.forEach((doctor) => {
             const doctorCard = `
-                        <div class="col-md-6 mb-3">
-                            <input type="radio" class="btn-check" name="doctor_id" value="${
-                              doctor.id
-                            }" id="doctor${doctor.id}">
-                            <label class="btn btn-outline-primary w-100 text-start p-3" for="doctor${
-                              doctor.id
-                            }">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">Dr. ${doctor.name}</h6>
-                                        <small class="text-muted">${
-                                          doctor.specialization
-                                        }</small><br>
-                                        <small>${doctor.qualification}</small>
-                                    </div>
-                                    <div class="text-end">
-                                        <strong>Rs. ${doctor.consultation_fee.toFixed(
-                                          2
-                                        )}</strong><br>
-                                        <small class="text-muted">${
-                                          doctor.experience_years
-                                        } yrs exp</small>
-                                    </div>
-                                </div>
-                            </label>
-                        </div>
-                    `;
+              <div class="col-md-6 mb-3">
+                <input type="radio" class="btn-check" name="doctor_id"
+                  value="${doctor.id}" id="doctor${doctor.id}">
+                <label class="btn btn-outline-primary w-100 text-start p-3"
+                  for="doctor${doctor.id}">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-1">Dr. ${doctor.name}</h6>
+                      <small class="text-muted">${doctor.specialization}</small><br>
+                      <small>${doctor.qualification}</small>
+                    </div>
+                    <div class="text-end">
+                      <strong>Rs. ${doctor.consultation_fee.toFixed(2)}</strong><br>
+                      <small class="text-muted">${doctor.experience_years} yrs exp</small>
+                    </div>
+                  </div>
+                </label>
+              </div>`;
             doctorsList.innerHTML += doctorCard;
           });
 
-          // Add event listeners to doctor selection
-          document
-            .querySelectorAll('input[name="doctor_id"]')
-            .forEach((radio) => {
-              radio.addEventListener("change", function () {
-                selectedDoctor = this.value;
-                showTimeSlots(selectedDoctor);
-              });
+          // When doctor selected → load dynamic 15-min slots
+          document.querySelectorAll('input[name="doctor_id"]').forEach((radio) => {
+            radio.addEventListener("change", function() {
+              selectedDoctor = this.value;
+              showTimeSlots(selectedDoctor);
             });
+          });
         }
 
-        // In the displayDoctors function, update the time slot handling
+        // ── Load time slots from get_doctor_times API ──────────────
         function showTimeSlots(doctorId) {
           const date = dateInput.value;
           if (!date) return;
 
-          // Fetch booked slots from server
-          fetch(
-            `/api/doctors/available?specialization=${specializationSelect.value}&date=${date}`
-          )
-            .then((response) => response.json())
-            .then((doctors) => {
-              const doctor = doctors.find((d) => d.id == doctorId);
-              const bookedSlots = doctor ? doctor.booked_slots : [];
+          const timeSlotsContainer = document.getElementById("timeSlots");
+          timeSlotsContainer.innerHTML =
+            '<div class="text-muted small"><i class="fas fa-spinner fa-spin me-1"></i> Loading available slots...</div>';
+          timeSlotsSection.style.display = "block";
+          detailsSection.style.display = "none";
+          bookButton.disabled = true;
 
-              const timeSlotsContainer = document.getElementById("timeSlots");
+          // Call our Phase 1 API — returns {working, available, booked, shifts}
+          fetch("/get_doctor_times/" + doctorId + "/" + date)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
               timeSlotsContainer.innerHTML = "";
 
-              timeSlots.forEach((slot) => {
-                const isBooked = bookedSlots.includes(slot);
-                const timeSlot = `
-                    <input type="radio" class="btn-check" name="time" value="${slot}" id="time${slot.replace(
-                  /[^a-zA-Z0-9]/g,
-                  ""
-                )}" ${isBooked ? "disabled" : ""}>
-                    <label class="btn ${
-                      isBooked ? "btn-secondary" : "btn-outline-success"
-                    } time-slot" for="time${slot.replace(/[^a-zA-Z0-9]/g, "")}">
-                        ${slot}
-                    </label>
-                `;
-                timeSlotsContainer.innerHTML += timeSlot;
+              // Doctor not working on this day
+              if (!data.working) {
+                timeSlotsContainer.innerHTML =
+                  '<div class="alert alert-warning mb-0">' +
+                  '<i class="fas fa-exclamation-triangle me-2"></i>' +
+                  (data.message || "Doctor is not available on this day.") +
+                  "</div>";
+                return;
+              }
+
+              var available = data.available || [];
+              var booked    = data.booked    || [];
+
+              if (available.length === 0 && booked.length === 0) {
+                timeSlotsContainer.innerHTML =
+                  '<div class="alert alert-warning mb-0">' +
+                  '<i class="fas fa-calendar-times me-2"></i>' +
+                  "No slots available for this date." +
+                  "</div>";
+                return;
+              }
+
+              // Slot count label
+              var countDiv = document.createElement("div");
+              countDiv.className = "w-100 mb-2 small text-muted fw-semibold";
+              countDiv.textContent =
+                available.length + " of " + (available.length + booked.length) +
+                " slots available";
+              timeSlotsContainer.appendChild(countDiv);
+
+              // Render available slots — green, clickable
+              available.forEach(function(slot) {
+                var safeId = "time" + slot.replace(/[^a-zA-Z0-9]/g, "");
+                var input  = document.createElement("input");
+                input.type      = "radio";
+                input.className = "btn-check";
+                input.name      = "time";
+                input.value     = slot;
+                input.id        = safeId;
+                input.addEventListener("change", function() {
+                  selectedTime = this.value;
+                  showAppointmentDetails();
+                });
+
+                var label = document.createElement("label");
+                label.className  = "btn btn-outline-success time-slot";
+                label.htmlFor    = safeId;
+                label.textContent = slot;
+
+                timeSlotsContainer.appendChild(input);
+                timeSlotsContainer.appendChild(label);
+              });
+
+              // Render booked slots — grey, disabled
+              booked.forEach(function(slot) {
+                var safeId = "time" + slot.replace(/[^a-zA-Z0-9]/g, "");
+                var input  = document.createElement("input");
+                input.type      = "radio";
+                input.className = "btn-check";
+                input.name      = "time";
+                input.value     = slot;
+                input.id        = safeId;
+                input.disabled  = true;
+
+                var label = document.createElement("label");
+                label.className   = "btn btn-secondary time-slot";
+                label.htmlFor     = safeId;
+                label.textContent = slot + " ✗";
+                label.title       = "Already booked";
+                label.style.textDecoration = "line-through";
+                label.style.opacity = "0.5";
+
+                timeSlotsContainer.appendChild(input);
+                timeSlotsContainer.appendChild(label);
               });
 
               timeSlotsSection.style.display = "block";
               detailsSection.style.display = "none";
               bookButton.disabled = true;
-
-              // Add event listeners to time slot selection
-              document
-                .querySelectorAll('input[name="time"]')
-                .forEach((radio) => {
-                  radio.addEventListener("change", function () {
-                    selectedTime = this.value;
-                    showAppointmentDetails();
-                  });
-                });
+            })
+            .catch(function(err) {
+              console.error("Slot load error:", err);
+              timeSlotsContainer.innerHTML =
+                '<div class="alert alert-danger mb-0">' +
+                '<i class="fas fa-exclamation-circle me-2"></i>' +
+                "Unable to load slots. Please refresh the page." +
+                "</div>";
             });
         }
 

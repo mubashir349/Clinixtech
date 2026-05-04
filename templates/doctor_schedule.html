@@ -3,704 +3,519 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Set Availability | MediConnect</title>
-  
+  <title>Schedule Management | Clinixtech</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      background: linear-gradient(135deg, #3771a1 0%, #1f52b1 100%);
-      min-height: 100vh;
-      font-family: 'Inter', sans-serif;
+    :root {
+      --navy:      #1341a0;
+      --accent:    #2a6dd9;
+      --accent-lt: #e8f0fc;
+      --surface:   #ffffff;
+      --border:    #e4e9f0;
+      --muted:     #7a869a;
+      --text:      #1a2540;
+      --success:   #0e9f6e;
+      --danger:    #dc2626;
+      --warn:      #d97706;
     }
-    
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Sora', sans-serif; background: #f0f4f9; color: var(--text); min-height: 100vh; }
+
+    /* NAVBAR */
     .navbar {
-      background: rgba(37, 99, 235, 0.95);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      background: var(--navy); padding: 0 32px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
     }
-    .navbar-brand {
-      color: white !important;
-      font-weight: 700;
-      font-size: 1.5rem;
-    }
-    .nav-link {
-      color: rgba(255,255,255,0.9) !important;
-      font-weight: 500;
-    }
-    
-    .container-main {
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-    
-    .header-card {
-      background: white;
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-      margin-bottom: 30px;
-      text-align: center;
-    }
-    
-    .header-card h2 {
-      color: #1e293b;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-    
-    .availability-card {
-      background: white;
-      border-radius: 20px;
-      padding: 35px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-      margin-bottom: 25px;
-    }
-    
-    .card-title {
-      color: #1e293b;
-      font-weight: 700;
-      font-size: 1.4rem;
-      margin-bottom: 25px;
-      padding-bottom: 15px;
-      border-bottom: 3px solid #2563eb;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .week-selector {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #f1f5f9;
-      padding: 20px;
-      border-radius: 15px;
-      margin-bottom: 30px;
-    }
-    
-    .week-nav-btn {
-      background: #2563eb;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-    
-    .week-nav-btn:hover {
-      background: #1e40af;
-      transform: translateY(-2px);
-    }
-    
-    .current-week {
-      text-align: center;
-    }
-    
-    .current-week h4 {
-      color: #1e293b;
-      font-weight: 700;
-      margin: 0;
-    }
-    
-    .current-week p {
-      color: #64748b;
-      margin: 5px 0 0 0;
-      font-size: 0.9rem;
-    }
-    
-    .day-schedule {
-      background: #f8fafc;
-      border-radius: 15px;
-      padding: 20px;
-      margin-bottom: 15px;
-      border: 2px solid #e2e8f0;
-      transition: all 0.3s ease;
-    }
-    
-    .day-schedule:hover {
-      border-color: #2563eb;
-      box-shadow: 0 3px 10px rgba(37, 99, 235, 0.1);
-    }
-    
-    .day-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    
-    .day-name {
-      color: #1e293b;
-      font-weight: 700;
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .toggle-switch {
-      position: relative;
-      width: 60px;
-      height: 30px;
-    }
-    
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    
-    .toggle-slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #cbd5e1;
-      border-radius: 30px;
-      transition: 0.4s;
-    }
-    
-    .toggle-slider:before {
-      position: absolute;
-      content: "";
-      height: 22px;
-      width: 22px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      border-radius: 50%;
-      transition: 0.4s;
-    }
-    
-    input:checked + .toggle-slider {
-      background-color: #16a34a;
-    }
-    
-    input:checked + .toggle-slider:before {
-      transform: translateX(30px);
-    }
-    
-    .time-slots {
-      display: none;
-      margin-top: 15px;
-    }
-    
-    .time-slots.active {
-      display: block;
-    }
-    
-    .time-slot-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-    
-    .time-slot {
-      position: relative;
-    }
-    
-    .time-slot input[type="checkbox"] {
-      display: none;
-    }
-    
-    .time-slot label {
-      display: block;
-      padding: 12px;
-      background: white;
-      border: 2px solid #e2e8f0;
-      border-radius: 10px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: 600;
-      color: #64748b;
-    }
-    
-    .time-slot input:checked + label {
-      background: #2563eb;
-      color: white;
-      border-color: #2563eb;
-      transform: scale(1.05);
-    }
-    
-    .time-slot label:hover {
-      border-color: #2563eb;
-    }
-    
-    .btn-save {
-      width: 100%;
-      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-      color: white;
-      border: none;
-      padding: 16px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 20px;
-    }
-    
-    .btn-save:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(22, 163, 74, 0.3);
-    }
-    
-    .alert {
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 20px;
-    }
-    
-    .info-box {
-      background: #eff6ff;
-      border-left: 4px solid #2563eb;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 25px;
-    }
-    
-    .info-box p {
-      margin: 0;
-      color: #1e40af;
-      font-size: 0.95rem;
-    }
+    .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff; font-weight: 800; font-size: 1.2rem; }
+    .brand-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+    .nav-links { display: flex; align-items: center; gap: 24px; }
+    .nav-link { text-decoration: none; color: rgba(255,255,255,0.6); font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .nav-link:hover { color: #fff; }
+
+    /* LAYOUT */
+    .page-wrap { max-width: 860px; margin: 0 auto; padding: 36px 24px 60px; }
+    .page-header { margin-bottom: 24px; }
+    .page-header h1 { font-size: 1.9rem; color: var(--navy); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 4px; }
+    .page-header p { color: var(--muted); font-size: 0.875rem; }
+
+    /* ALERTS */
+    .alert { border: 1px solid; border-radius: 10px; padding: 12px 18px; margin-bottom: 16px; font-size: 0.875rem; display: flex; align-items: center; gap: 10px; }
+    .alert-success { background: #ecfdf5; border-color: #a7f3d0; color: var(--success); }
+    .alert-danger   { background: #fef2f2; border-color: #fecaca; color: var(--danger); }
+    .alert-warning  { background: #fffbeb; border-color: #fde68a; color: var(--warn); }
+
+    /* INFO NOTE */
+    .info-note { display: flex; align-items: flex-start; gap: 10px; background: var(--accent-lt); border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; font-size: 0.8rem; color: #2a4a8a; line-height: 1.5; }
+    .info-note i { color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+
+    /* OUTER CARD */
+    .outer-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+    .outer-card-header { padding: 18px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .outer-card-header h2 { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0; }
+
+    /* DAY ROW */
+    .day-row { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    .day-row:last-of-type { border-bottom: none; }
+    .day-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; cursor: pointer; user-select: none; }
+    .day-header:hover { background: #fafbfc; }
+    .day-row.is-active .day-header { background: #f5f8ff; }
+    .day-left { display: flex; align-items: center; gap: 12px; }
+    .day-name { font-weight: 700; font-size: 0.95rem; color: var(--navy); width: 100px; }
+    .shift-summary { font-size: 0.72rem; font-weight: 600; color: var(--accent); background: var(--accent-lt); padding: 3px 9px; border-radius: 20px; display: none; }
+    .shift-summary.visible { display: inline-block; }
+    .day-right { display: flex; align-items: center; gap: 12px; }
+
+    /* TOGGLE */
+    .toggle-wrap { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle-wrap input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-slider { position: absolute; inset: 0; background: #d1d9e6; border-radius: 22px; cursor: pointer; transition: background 0.25s; }
+    .toggle-slider::before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform 0.25s; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+    input:checked + .toggle-slider { background: var(--success); }
+    input:checked + .toggle-slider::before { transform: translateX(18px); }
+    .chevron { color: var(--muted); font-size: 0.75rem; transition: transform 0.25s; }
+    .day-row.is-active .chevron { transform: rotate(180deg); }
+
+    /* SHIFTS PANEL */
+    .shifts-panel { display: none; padding: 16px 24px 20px; background: #fafbfc; border-top: 1px solid var(--border); }
+    .shifts-panel.open { display: block; }
+
+    /* SHIFT CARD */
+    .shift-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+    .shift-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .shift-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+    .btn-remove-shift { background: none; border: none; cursor: pointer; color: #e53e3e; font-size: 0.8rem; font-weight: 600; padding: 3px 8px; border-radius: 5px; transition: background 0.15s; display: flex; align-items: center; gap: 4px; font-family: 'Sora', sans-serif; }
+    .btn-remove-shift:hover { background: #fef2f2; }
+
+    /* TIME ROW */
+    .time-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .time-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 130px; }
+    .time-group label { font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .time-group select { border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 12px; font-family: 'Sora', sans-serif; font-size: 0.85rem; color: var(--text); background: #fff; cursor: pointer; transition: border-color 0.2s; outline: none; }
+    .time-group select:focus { border-color: var(--accent); }
+    .time-group select.is-error   { border-color: var(--danger) !important; }
+    .time-group select.is-success { border-color: var(--success) !important; }
+    .time-arrow { font-size: 1.1rem; color: var(--muted); margin-top: 20px; flex-shrink: 0; }
+
+    /* SHIFT FEEDBACK */
+    .shift-feedback { margin-top: 8px; font-size: 0.78rem; font-weight: 600; padding: 6px 10px; border-radius: 6px; display: none; }
+    .shift-feedback.is-error   { background: #fef2f2; color: var(--danger);  display: block; }
+    .shift-feedback.is-warning { background: #fffbeb; color: var(--warn);    display: block; }
+    .shift-feedback.is-success { background: #ecfdf5; color: var(--success); display: block; }
+
+    /* ADD SHIFT BUTTON */
+    .btn-add-shift { display: flex; align-items: center; gap: 6px; background: none; border: 1.5px dashed var(--accent); color: var(--accent); border-radius: 8px; padding: 9px 16px; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.15s; width: 100%; justify-content: center; margin-top: 4px; font-family: 'Sora', sans-serif; }
+    .btn-add-shift:hover { background: var(--accent-lt); }
+
+    /* SAVE BUTTON */
+    .form-footer { padding: 20px 24px; border-top: 1px solid var(--border); background: var(--surface); }
+    .btn-save { width: 100%; background: linear-gradient(135deg, #1a6fc4 0%, #1341a0 100%); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; font-family: 'Sora', sans-serif; }
+    .btn-save:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(26,111,196,0.3); }
   </style>
 </head>
 <body>
 
-  <nav class="navbar navbar-expand-lg sticky-top py-3">
-    <div class="container">
-      <a class="navbar-brand" href="#">Clinixtech</a>
-      <div class="collapse navbar-collapse justify-content-end">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('doctor_appointments') }}">
-              <i class="fas fa-calendar-check"></i> View Appointments
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('dashboard_doctor') }}">
-              <i class="fas fa-arrow-left"></i> Back to Dashboard
-            </a>
-          </li>
-        </ul>
-      </div>
+  <nav class="navbar">
+    <a class="brand" href="{{ url_for('dashboard_doctor') }}">
+      <span class="brand-dot"></span> Clinixtech
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="{{ url_for('doctor_appointments') }}">
+        <i class="fas fa-calendar-check"></i> Appointments
+      </a>
+      <a class="nav-link" href="{{ url_for('dashboard_doctor') }}">
+        <i class="fas fa-arrow-left"></i> Dashboard
+      </a>
     </div>
   </nav>
 
-  <div class="container-main">
-    
-    <div class="header-card">
-      <h2><i class="fas fa-calendar-alt"></i> Set Your Availability</h2>
-      <p>Configure your available time slots for the week</p>
+  <div class="page-wrap">
+
+    <div class="page-header">
+      <h1>Schedule Management</h1>
+      <p>Set your weekly availability. You can add multiple shifts per day.</p>
     </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
-        {% endfor %}
-      {% endif %}
+      {% if messages %}{% for category, message in messages %}
+        <div class="alert alert-{{ 'success' if category == 'success' else ('warning' if category == 'warning' else 'danger') }}">
+          <i class="fas fa-{{ 'check-circle' if category == 'success' else ('exclamation-triangle' if category == 'warning' else 'exclamation-circle') }}"></i>
+          {{ message }}
+        </div>
+      {% endfor %}{% endif %}
     {% endwith %}
 
-    <div class="availability-card">
-      <h3 class="card-title">
-        <i class="fas fa-clock"></i> Weekly Schedule
-      </h3>
-      
-      
-      <div class="week-selector">
-        <button class="week-nav-btn" onclick="previousWeek()">
-          <i class="fas fa-chevron-left"></i> Previous
-        </button>
-        <div class="current-week">
-          <h4 id="week-display">Week of Nov 16 - Nov 22, 2025</h4>
-          <p>Current Week</p>
-        </div>
-        <button class="week-nav-btn" onclick="nextWeek()">
-          Next <i class="fas fa-chevron-right"></i>
-        </button>
-      </div>
-
-      <form method="POST" action="{{ url_for('doctor_schedule') }}">
-        
-        <!-- Monday -->
-        <div class="day-schedule">
-          <div class="day-header">
-            <span class="day-name">
-              <i class="fas fa-calendar-day"></i> Monday
-            </span>
-            <label class="toggle-switch">
-              <input type="checkbox" name="monday_enabled" onchange="toggleDay('monday')">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="time-slots" id="monday-slots">
-            <div class="time-slot-grid">
-              <div class="time-slot">
-                <input type="checkbox" id="mon-9" name="monday_slots" value="09:00 AM">
-                <label for="mon-9">09:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="mon-10" name="monday_slots" value="10:00 AM">
-                <label for="mon-10">10:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="mon-11" name="monday_slots" value="11:00 AM">
-                <label for="mon-11">11:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="mon-12" name="monday_slots" value="12:00 PM">
-                <label for="mon-12">12:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="mon-2" name="monday_slots" value="02:00 PM">
-                <label for="mon-2">02:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="mon-3" name="monday_slots" value="03:00 PM">
-                <label for="mon-3">03:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="mon-4" name="monday_slots" value="04:00 PM">
-                <label for="mon-4">04:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="mon-5" name="monday_slots" value="05:00 PM">
-                <label for="mon-5">05:00 PM</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tuesday -->
-        <div class="day-schedule">
-          <div class="day-header">
-            <span class="day-name">
-              <i class="fas fa-calendar-day"></i> Tuesday
-            </span>
-            <label class="toggle-switch">
-              <input type="checkbox" name="tuesday_enabled" onchange="toggleDay('tuesday')">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="time-slots" id="tuesday-slots">
-            <div class="time-slot-grid">
-              <div class="time-slot">
-                <input type="checkbox" id="tue-9" name="tuesday_slots" value="09:00 AM">
-                <label for="tue-9">09:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="tue-10" name="tuesday_slots" value="10:00 AM">
-                <label for="tue-10">10:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="tue-11" name="tuesday_slots" value="11:00 AM">
-                <label for="tue-11">11:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="tue-12" name="tuesday_slots" value="12:00 PM">
-                <label for="tue-12">12:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="tue-2" name="tuesday_slots" value="02:00 PM">
-                <label for="tue-2">02:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="tue-3" name="tuesday_slots" value="03:00 PM">
-                <label for="tue-3">03:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="tue-4" name="tuesday_slots" value="04:00 PM">
-                <label for="tue-4">04:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="tue-5" name="tuesday_slots" value="05:00 PM">
-                <label for="tue-5">05:00 PM</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Wednesday -->
-        <div class="day-schedule">
-          <div class="day-header">
-            <span class="day-name">
-              <i class="fas fa-calendar-day"></i> Wednesday
-            </span>
-            <label class="toggle-switch">
-              <input type="checkbox" name="wednesday_enabled" onchange="toggleDay('wednesday')">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="time-slots" id="wednesday-slots">
-            <div class="time-slot-grid">
-              <div class="time-slot">
-                <input type="checkbox" id="wed-9" name="wednesday_slots" value="09:00 AM">
-                <label for="wed-9">09:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="wed-10" name="wednesday_slots" value="10:00 AM">
-                <label for="wed-10">10:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="wed-11" name="wednesday_slots" value="11:00 AM">
-                <label for="wed-11">11:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="wed-12" name="wednesday_slots" value="12:00 PM">
-                <label for="wed-12">12:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="wed-2" name="wednesday_slots" value="02:00 PM">
-                <label for="wed-2">02:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="wed-3" name="wednesday_slots" value="03:00 PM">
-                <label for="wed-3">03:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="wed-4" name="wednesday_slots" value="04:00 PM">
-                <label for="wed-4">04:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="wed-5" name="wednesday_slots" value="05:00 PM">
-                <label for="wed-5">05:00 PM</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Thursday -->
-        <div class="day-schedule">
-          <div class="day-header">
-            <span class="day-name">
-              <i class="fas fa-calendar-day"></i> Thursday
-            </span>
-            <label class="toggle-switch">
-              <input type="checkbox" name="thursday_enabled" onchange="toggleDay('thursday')">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="time-slots" id="thursday-slots">
-            <div class="time-slot-grid">
-              <div class="time-slot">
-                <input type="checkbox" id="thu-9" name="thursday_slots" value="09:00 AM">
-                <label for="thu-9">09:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="thu-10" name="thursday_slots" value="10:00 AM">
-                <label for="thu-10">10:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="thu-11" name="thursday_slots" value="11:00 AM">
-                <label for="thu-11">11:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="thu-12" name="thursday_slots" value="12:00 PM">
-                <label for="thu-12">12:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="thu-2" name="thursday_slots" value="02:00 PM">
-                <label for="thu-2">02:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="thu-3" name="thursday_slots" value="03:00 PM">
-                <label for="thu-3">03:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="thu-4" name="thursday_slots" value="04:00 PM">
-                <label for="thu-4">04:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="thu-5" name="thursday_slots" value="05:00 PM">
-                <label for="thu-5">05:00 PM</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Friday -->
-        <div class="day-schedule">
-          <div class="day-header">
-            <span class="day-name">
-              <i class="fas fa-calendar-day"></i> Friday
-            </span>
-            <label class="toggle-switch">
-              <input type="checkbox" name="friday_enabled" onchange="toggleDay('friday')">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="time-slots" id="friday-slots">
-            <div class="time-slot-grid">
-              <div class="time-slot">
-                <input type="checkbox" id="fri-9" name="friday_slots" value="09:00 AM">
-                <label for="fri-9">09:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="fri-10" name="friday_slots" value="10:00 AM">
-                <label for="fri-10">10:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="fri-11" name="friday_slots" value="11:00 AM">
-                <label for="fri-11">11:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="fri-12" name="friday_slots" value="12:00 PM">
-                <label for="fri-12">12:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="fri-2" name="friday_slots" value="02:00 PM">
-                <label for="fri-2">02:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="fri-3" name="friday_slots" value="03:00 PM">
-                <label for="fri-3">03:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="fri-4" name="friday_slots" value="04:00 PM">
-                <label for="fri-4">04:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="fri-5" name="friday_slots" value="05:00 PM">
-                <label for="fri-5">05:00 PM</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Saturday -->
-        <div class="day-schedule">
-          <div class="day-header">
-            <span class="day-name">
-              <i class="fas fa-calendar-day"></i> Saturday
-            </span>
-            <label class="toggle-switch">
-              <input type="checkbox" name="saturday_enabled" onchange="toggleDay('saturday')">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="time-slots" id="saturday-slots">
-            <div class="time-slot-grid">
-              <div class="time-slot">
-                <input type="checkbox" id="sat-9" name="saturday_slots" value="09:00 AM">
-                <label for="sat-9">09:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="sat-10" name="saturday_slots" value="10:00 AM">
-                <label for="sat-10">10:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="sat-11" name="saturday_slots" value="11:00 AM">
-                <label for="sat-11">11:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="sat-12" name="saturday_slots" value="12:00 PM">
-                <label for="sat-12">12:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="sat-2" name="saturday_slots" value="02:00 PM">
-                <label for="sat-2">02:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="sat-3" name="saturday_slots" value="03:00 PM">
-                <label for="sat-3">03:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="sat-4" name="saturday_slots" value="04:00 PM">
-                <label for="sat-4">04:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="sat-5" name="saturday_slots" value="05:00 PM">
-                <label for="sat-5">05:00 PM</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Sunday -->
-        <div class="day-schedule">
-          <div class="day-header">
-            <span class="day-name">
-              <i class="fas fa-calendar-day"></i> Sunday
-            </span>
-            <label class="toggle-switch">
-              <input type="checkbox" name="sunday_enabled" onchange="toggleDay('sunday')">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="time-slots" id="sunday-slots">
-            <div class="time-slot-grid">
-              <div class="time-slot">
-                <input type="checkbox" id="sun-9" name="sunday_slots" value="09:00 AM">
-                <label for="sun-9">09:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="sun-10" name="sunday_slots" value="10:00 AM">
-                <label for="sun-10">10:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="sun-11" name="sunday_slots" value="11:00 AM">
-                <label for="sun-11">11:00 AM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="sun-12" name="sunday_slots" value="12:00 PM">
-                <label for="sun-12">12:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="sun-2" name="sunday_slots" value="02:00 PM">
-                <label for="sun-2">02:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="sun-3" name="sunday_slots" value="03:00 PM">
-                <label for="sun-3">03:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="sun-4" name="sunday_slots" value="04:00 PM">
-                <label for="sun-4">04:00 PM</label>
-              </div>
-              <div class="time-slot">
-                <input type="checkbox" id="sun-5" name="sunday_slots" value="05:00 PM">
-                <label for="sun-5">05:00 PM</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <button type="submit" class="btn-save">
-          <i class="fas fa-save"></i> Save Availability
-        </button>
-      </form>
+    <div class="info-note">
+      <i class="fas fa-info-circle"></i>
+      <span>
+        Toggle a day ON to set your availability. Click <strong>+ Add Another Shift</strong>
+        to add a second or third shift on the same day. Clinic hours are
+        <strong>8:00 AM – 10:00 PM</strong>. The system will automatically generate
+        <strong>15-minute appointment slots</strong> from your shift times.
+      </span>
     </div>
+
+    <form method="POST" action="{{ url_for('doctor_schedule') }}" id="scheduleForm">
+      <div class="outer-card">
+
+        <div class="outer-card-header">
+          <h2>Weekly Availability</h2>
+        </div>
+
+        {% for day in all_days %}
+          {% set saved = availability.get(day, []) %}
+          {% set active = saved|length > 0 %}
+
+          <div class="day-row {{ 'is-active' if active else '' }}" id="row-{{ day }}">
+
+            <div class="day-header" onclick="toggleDay('{{ day }}')">
+              <div class="day-left">
+                <span class="day-name">{{ day|capitalize }}</span>
+                <span class="shift-summary {{ 'visible' if active else '' }}" id="summary-{{ day }}">
+                  {% if active %}{{ saved|length }} shift{{ 's' if saved|length != 1 else '' }}{% endif %}
+                </span>
+              </div>
+              <div class="day-right">
+                <label class="toggle-wrap" onclick="event.stopPropagation()">
+                  <input type="checkbox" name="{{ day }}_enabled" id="toggle-{{ day }}"
+                         {% if active %}checked{% endif %}
+                         onchange="onToggle('{{ day }}')">
+                  <span class="toggle-slider"></span>
+                </label>
+                <i class="fas fa-chevron-down chevron"></i>
+              </div>
+            </div>
+
+            <div class="shifts-panel {{ 'open' if active else '' }}" id="panel-{{ day }}">
+              <div id="shifts-{{ day }}">
+
+                {% if active %}
+                  {% for shift in saved %}
+                  <div class="shift-card" id="shift-{{ day }}-{{ loop.index0 }}">
+                    <div class="shift-card-header">
+                      <span class="shift-label">Shift {{ loop.index }}</span>
+                      {% if not loop.first %}
+                      <button type="button" class="btn-remove-shift"
+                              onclick="removeShift('{{ day }}', {{ loop.index0 }})">
+                        <i class="fas fa-times"></i> Remove
+                      </button>
+                      {% endif %}
+                    </div>
+                    <div class="time-row">
+                      <div class="time-group">
+                        <label><i class="fas fa-play-circle" style="color:var(--success)"></i> Start Time</label>
+                        <select name="{{ day }}_shift_{{ loop.index0 }}_start"
+                                id="start-{{ day }}-{{ loop.index0 }}"
+                                onchange="validateShift('{{ day }}', {{ loop.index0 }})">
+                          {% for t in time_options %}
+                          <option value="{{ t }}" {% if t == shift.start %}selected{% endif %}>{{ t }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <span class="time-arrow">→</span>
+                      <div class="time-group">
+                        <label><i class="fas fa-stop-circle" style="color:var(--danger)"></i> End Time</label>
+                        <select name="{{ day }}_shift_{{ loop.index0 }}_end"
+                                id="end-{{ day }}-{{ loop.index0 }}"
+                                onchange="validateShift('{{ day }}', {{ loop.index0 }})">
+                          {% for t in time_options %}
+                          <option value="{{ t }}" {% if t == shift.end %}selected{% endif %}>{{ t }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="shift-feedback" id="feedback-{{ day }}-{{ loop.index0 }}"></div>
+                  </div>
+                  {% endfor %}
+
+                {% else %}
+                  <!-- Default first shift card -->
+                  <div class="shift-card" id="shift-{{ day }}-0">
+                    <div class="shift-card-header">
+                      <span class="shift-label">Shift 1</span>
+                    </div>
+                    <div class="time-row">
+                      <div class="time-group">
+                        <label><i class="fas fa-play-circle" style="color:var(--success)"></i> Start Time</label>
+                        <select name="{{ day }}_shift_0_start" id="start-{{ day }}-0"
+                                onchange="validateShift('{{ day }}', 0)">
+                          {% for t in time_options %}
+                          <option value="{{ t }}" {% if t == '09:00 AM' %}selected{% endif %}>{{ t }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <span class="time-arrow">→</span>
+                      <div class="time-group">
+                        <label><i class="fas fa-stop-circle" style="color:var(--danger)"></i> End Time</label>
+                        <select name="{{ day }}_shift_0_end" id="end-{{ day }}-0"
+                                onchange="validateShift('{{ day }}', 0)">
+                          {% for t in time_options %}
+                          <option value="{{ t }}" {% if t == '01:00 PM' %}selected{% endif %}>{{ t }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="shift-feedback" id="feedback-{{ day }}-0"></div>
+                  </div>
+                {% endif %}
+
+              </div><!-- /shifts-{day} -->
+
+              <button type="button" class="btn-add-shift" onclick="addShift('{{ day }}')">
+                <i class="fas fa-plus"></i> Add Another Shift
+              </button>
+
+            </div><!-- /shifts-panel -->
+          </div><!-- /day-row -->
+        {% endfor %}
+
+        <div class="form-footer">
+          <button type="submit" class="btn-save">
+            <i class="fas fa-check" style="font-size:0.75rem;margin-right:6px;"></i>
+            Save Schedule
+          </button>
+        </div>
+
+      </div>
+    </form>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
   <script>
+    
+    // Time options injected from Flask (8AM–10PM, 30-min intervals)
+    const TIME_OPTIONS = {{ time_options | tojson }};
+
+    // ── Parse "09:00 AM" → minutes since midnight ──────────────────
+    function toMins(t) {
+      if (!t) return -1;
+      var d = new Date('1970-01-01 ' + t);
+      return isNaN(d) ? -1 : d.getHours() * 60 + d.getMinutes();
+    }
+
+    // ── Get next time option after a given time ────────────────────
+    function nextOption(t) {
+      var i = TIME_OPTIONS.indexOf(t);
+      return (i >= 0 && i < TIME_OPTIONS.length - 1)
+        ? TIME_OPTIONS[i + 1]
+        : TIME_OPTIONS[TIME_OPTIONS.length - 1];
+    }
+
+    // ── Toggle day panel ───────────────────────────────────────────
     function toggleDay(day) {
-      const slots = document.getElementById(day + '-slots');
-      slots.classList.toggle('active');
+      var cb = document.getElementById('toggle-' + day);
+      cb.checked = !cb.checked;
+      onToggle(day);
     }
 
-    function previousWeek() {
-      alert('Previous week functionality to be implemented in future');
+    function onToggle(day) {
+      var cb      = document.getElementById('toggle-' + day);
+      var panel   = document.getElementById('panel-' + day);
+      var row     = document.getElementById('row-' + day);
+      var summary = document.getElementById('summary-' + day);
+      if (cb.checked) {
+        panel.classList.add('open');
+        row.classList.add('is-active');
+        validateAllShifts(day);
+      } else {
+        panel.classList.remove('open');
+        row.classList.remove('is-active');
+        summary.classList.remove('visible');
+        summary.textContent = '';
+      }
     }
 
-    function nextWeek() {
-      alert('Next week functionality to be implemented in future');
+    // ── Validate a single shift card ───────────────────────────────
+    function validateShift(day, idx) {
+      var startEl  = document.getElementById('start-'    + day + '-' + idx);
+      var endEl    = document.getElementById('end-'      + day + '-' + idx);
+      var feedback = document.getElementById('feedback-' + day + '-' + idx);
+      if (!startEl || !endEl || !feedback) return true;
+
+      var sM = toMins(startEl.value);
+      var eM = toMins(endEl.value);
+
+      // Reset
+      startEl.className = '';
+      endEl.className   = '';
+      feedback.className   = 'shift-feedback';
+      feedback.textContent = '';
+
+      // Check overlap with previous shift
+      if (idx > 0) {
+        var prevEnd = document.getElementById('end-' + day + '-' + (idx - 1));
+        if (prevEnd && toMins(prevEnd.value) >= sM) {
+          feedback.className   = 'shift-feedback is-error';
+          feedback.textContent = '❌ Start time must be after Shift ' + idx + ' end time (' + prevEnd.value + ')';
+          startEl.className    = 'is-error';
+          return false;
+        }
+      }
+
+      if (eM <= sM) {
+        feedback.className   = 'shift-feedback is-error';
+        feedback.textContent = '❌ End time must be after start time';
+        endEl.className      = 'is-error';
+        return false;
+      }
+
+      var diff = eM - sM;
+      if (diff < 30) {
+        feedback.className   = 'shift-feedback is-warning';
+        feedback.textContent = '⚠️ Minimum shift is 30 minutes (currently ' + diff + ' mins)';
+        endEl.className      = 'is-error';
+        return false;
+      }
+
+      // Success
+      var slots = Math.floor(diff / 15);
+      feedback.className   = 'shift-feedback is-success';
+      feedback.textContent = '✅ ' + slots + ' appointment slots (' + startEl.value + ' → ' + endEl.value + ')';
+      startEl.className    = 'is-success';
+      endEl.className      = 'is-success';
+      updateSummary(day);
+      return true;
     }
+
+    // ── Validate all shifts for a day ──────────────────────────────
+    function validateAllShifts(day) {
+      var cards = document.querySelectorAll('#shifts-' + day + ' .shift-card');
+      var valid = true;
+      cards.forEach(function(c, i) {
+        if (!validateShift(day, i)) valid = false;
+      });
+      updateSummary(day);
+      return valid;
+    }
+
+    // ── Update shift count badge ───────────────────────────────────
+    function updateSummary(day) {
+      var summary = document.getElementById('summary-' + day);
+      var toggle  = document.getElementById('toggle-'  + day);
+      var cards   = document.querySelectorAll('#shifts-' + day + ' .shift-card');
+      if (toggle && toggle.checked && cards.length > 0) {
+        summary.textContent = cards.length + ' shift' + (cards.length !== 1 ? 's' : '');
+        summary.classList.add('visible');
+      } else {
+        summary.classList.remove('visible');
+      }
+    }
+
+    // ── Add new shift card ─────────────────────────────────────────
+    function addShift(day) {
+      var container = document.getElementById('shifts-' + day);
+      var existing  = container.querySelectorAll('.shift-card');
+      var idx       = existing.length;
+
+      // Default start = after last shift's end
+      var lastEnd   = document.getElementById('end-' + day + '-' + (idx - 1));
+      var defStart  = lastEnd ? nextOption(lastEnd.value) : '09:00 AM';
+      var defEnd    = nextOption(defStart);
+
+      // Build card HTML
+      var optionsStart = TIME_OPTIONS.map(function(t) {
+        var dis = lastEnd && toMins(t) <= toMins(lastEnd.value) ? ' disabled style="color:#ccc"' : '';
+        var sel = t === defStart ? ' selected' : '';
+        return '<option value="' + t + '"' + dis + sel + '>' + t + '</option>';
+      }).join('');
+
+      var optionsEnd = TIME_OPTIONS.map(function(t) {
+        var sel = t === defEnd ? ' selected' : '';
+        return '<option value="' + t + '"' + sel + '>' + t + '</option>';
+      }).join('');
+
+      var html = '<div class="shift-card" id="shift-' + day + '-' + idx + '">' +
+        '<div class="shift-card-header">' +
+          '<span class="shift-label">Shift ' + (idx + 1) + '</span>' +
+          '<button type="button" class="btn-remove-shift" onclick="removeShift(\'' + day + '\',' + idx + ')">' +
+            '<i class="fas fa-times"></i> Remove' +
+          '</button>' +
+        '</div>' +
+        '<div class="time-row">' +
+          '<div class="time-group">' +
+            '<label><i class="fas fa-play-circle" style="color:var(--success)"></i> Start Time</label>' +
+            '<select name="' + day + '_shift_' + idx + '_start" id="start-' + day + '-' + idx + '" onchange="validateShift(\'' + day + '\',' + idx + ')">' +
+              optionsStart +
+            '</select>' +
+          '</div>' +
+          '<span class="time-arrow">→</span>' +
+          '<div class="time-group">' +
+            '<label><i class="fas fa-stop-circle" style="color:var(--danger)"></i> End Time</label>' +
+            '<select name="' + day + '_shift_' + idx + '_end" id="end-' + day + '-' + idx + '" onchange="validateShift(\'' + day + '\',' + idx + ')">' +
+              optionsEnd +
+            '</select>' +
+          '</div>' +
+        '</div>' +
+        '<div class="shift-feedback" id="feedback-' + day + '-' + idx + '"></div>' +
+      '</div>';
+
+      container.insertAdjacentHTML('beforeend', html);
+      validateShift(day, idx);
+      updateSummary(day);
+    }
+
+    // ── Remove shift and renumber ──────────────────────────────────
+    function removeShift(day, idx) {
+      var card = document.getElementById('shift-' + day + '-' + idx);
+      if (card) card.remove();
+
+      // Renumber remaining cards
+      var cards = document.querySelectorAll('#shifts-' + day + ' .shift-card');
+      cards.forEach(function(card, i) {
+        card.id = 'shift-' + day + '-' + i;
+
+        var lbl = card.querySelector('.shift-label');
+        if (lbl) lbl.textContent = 'Shift ' + (i + 1);
+
+        var rmBtn = card.querySelector('.btn-remove-shift');
+        if (i === 0 && rmBtn) {
+          rmBtn.remove();  // First shift has no remove button
+        }
+
+        // Fix input names and IDs
+        var startSel = card.querySelector('select[id^="start-"]');
+        var endSel   = card.querySelector('select[id^="end-"]');
+        var fb       = card.querySelector('.shift-feedback');
+
+        if (startSel) { startSel.name = day+'_shift_'+i+'_start'; startSel.id = 'start-'+day+'-'+i; startSel.setAttribute('onchange','validateShift(\''+day+'\','+i+')'); }
+        if (endSel)   { endSel.name   = day+'_shift_'+i+'_end';   endSel.id   = 'end-'+day+'-'+i;   endSel.setAttribute('onchange','validateShift(\''+day+'\','+i+')'); }
+        if (fb)       { fb.id = 'feedback-'+day+'-'+i; }
+      });
+
+      validateAllShifts(day);
+    }
+
+    // ── Block submit if errors ─────────────────────────────────────
+    document.getElementById('scheduleForm').addEventListener('submit', function(e) {
+      var days = {{ all_days | tojson }};
+      var allOk = true;
+      days.forEach(function(day) {
+        var cb = document.getElementById('toggle-' + day);
+        if (cb && cb.checked) {
+          if (!validateAllShifts(day)) allOk = false;
+        }
+      });
+      if (!allOk) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        alert('❌ Please fix the highlighted errors before saving!');
+      }
+    });
+
+    // ── On page load — validate pre-saved shifts ───────────────────
+    document.addEventListener('DOMContentLoaded', function() {
+      var days = {{ all_days | tojson }};
+      days.forEach(function(day) {
+        var cb = document.getElementById('toggle-' + day);
+        if (cb && cb.checked) {
+          validateAllShifts(day);
+        }
+      });
+    });
+
   </script>
 </body>
 </html>
